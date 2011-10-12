@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'lizard_area',
     'lizard_ui',
     'treebeard',
+    'djangorestframework',
     'staticfiles',
     'compressor',
     'south',

@@ -22,7 +22,7 @@ class GeoObjectGroup(models.Model):
     TODO: Automatically fill in slug
     """
     name = models.CharField(max_length=128)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     # legend = models.ForeignKey(LegendClass, null=True, blank=True)
     # "source"
 
@@ -59,6 +59,7 @@ class Category(AL_Node):
     Categories that are displayed in the ui.
     """
     name = models.CharField(max_length=128, unique=True)
+    slug = models.SlugField(unique=True)
     geo_object_groups = models.ManyToManyField(
         GeoObjectGroup, null=True, blank=True)
 
@@ -71,7 +72,19 @@ class Category(AL_Node):
         ordering = ('name', )
 
     def __unicode__(self):
-        return self.name
+        return '%s (%s)' % (self.name, self.slug)
+
+# class MapnikStyle(models.Model):
+#     """
+#     Mapnik styles in XML can be uploaded
+#     """
+#     name = models.CharField(max_length=128, unique=True)
+#     slug = models.SlugField()
+#     source_file = models.FileField()
+
+#     def __unicode__(self):
+#         return self.name
+
 
 #############################
 
@@ -89,14 +102,13 @@ class AreaAdministrator(models.Model):
         return self.name
 
 
-class Communique(models.Model):
+class Communique(GeoObject):
     """
     Communique: summary and status of an area.
 
     TODO: make lookup tables of some fields.
     TODO: Rename fields?
     """
-    geo_object = models.ForeignKey(GeoObject)
 
     # i.e. Reeuwijkse plassen
     name = models.CharField(max_length=128)

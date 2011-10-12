@@ -14,6 +14,7 @@ install_requires = [
     'django-extensions',
     'django-nose',
     'django-treebeard',
+    'djangorestframework',
     'lizard-ui >= 3.0',
     'pkginfo',
     ],
