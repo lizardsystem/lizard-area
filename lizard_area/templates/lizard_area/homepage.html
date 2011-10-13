@@ -6,9 +6,11 @@
 {% block sidebar %}
 <div class="sidebarbox sidebarbox-stretched">
   <h2>API test</h2>
-  <a class="rest-api" href="{% url lizard-area:api:root %}">
-    something here
-  </a>
+  <div class="rest-api-container">
+    <a class="rest-api" href="{% url lizard-area:api:category slug="krw-waterlichamen" %}">
+      Loading...
+    </a>
+  </div>
 </div>
 
 {% workspace_edit view.workspace_edit %}
