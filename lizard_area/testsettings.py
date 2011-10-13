@@ -29,12 +29,12 @@ DATABASES = {
     # the specified database exists. When the tests cannot run, Jenkins sees
     # that as an error.
     'default': {
-        'NAME': os.path.join(BUILDOUT_DIR, 'var', 'sqlite', 'test.db'),
-        'ENGINE': 'django.db.backends.sqlite3',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',  # empty string for localhost.
-        'PORT': '',  # empty string for default.
+        'NAME': 'lizard-area',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'USER': 'buildout',
+        'PASSWORD': 'buildout',
+        'HOST': 'localhost',  # empty string for localhost.
+        'PORT': '5432',  # empty string for default.
         }
     }
 SITE_ID = 1

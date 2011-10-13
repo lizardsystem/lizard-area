@@ -34,7 +34,8 @@ class GeoObjectGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('geo_object_group', kwargs={'pk': self.pk})
+        return reverse('lizard-area:api:geo_object_group',
+                       kwargs={'pk': self.pk})
 
 
 class GeoObject(AL_Node):
@@ -80,7 +81,7 @@ class Category(AL_Node):
         return '%s (%s)' % (self.name, self.slug)
 
     def get_absolute_url(self):
-        return reverse('category', kwargs={'slug': self.slug})
+        return reverse('lizard-area:api:category', kwargs={'slug': self.slug})
 
 
 # class MapnikStyle(models.Model):
@@ -148,4 +149,4 @@ class Communique(GeoObject):
         return '%s - %s' % (self.ident, self.name)
 
     def get_absolute_url(self):
-        return reverse('communique', kwargs={'pk': self.pk})
+        return reverse('lizard-area:api:communique', kwargs={'pk': self.pk})

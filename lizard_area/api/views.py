@@ -15,7 +15,7 @@ class RootView(View):
 
     def get(self, request):
         return {
-            "categories": reverse('category-root')}
+            "categories": reverse('lizard-area:api:category-root')}
 
 
 class CategoryRootView(View):
