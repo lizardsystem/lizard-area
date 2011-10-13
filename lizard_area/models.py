@@ -4,6 +4,7 @@ from treebeard.al_tree import AL_Node
 
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
+from django.core.urlresolvers import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,9 @@ class GeoObjectGroup(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('geo_object_group', kwargs={'pk': self.pk})
+
 
 class GeoObject(AL_Node):
     """
@@ -54,6 +58,7 @@ class GeoObject(AL_Node):
 
 ############################
 
+
 class Category(AL_Node):
     """
     Categories that are displayed in the ui.
@@ -73,6 +78,10 @@ class Category(AL_Node):
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.slug)
+
+    def get_absolute_url(self):
+        return reverse('category', kwargs={'slug': self.slug})
+
 
 # class MapnikStyle(models.Model):
 #     """
@@ -134,3 +143,9 @@ class Communique(GeoObject):
     # Waterbeheergebied. i.e. "Hoogheemraadschap van Rijnland"
     watermanagementarea = models.CharField(
         max_length=128, null=True, blank=True)
+
+    def __unicode__(self):
+        return '%s - %s' % (self.ident, self.name)
+
+    def get_absolute_url(self):
+        return reverse('communique', kwargs={'pk': self.pk})
