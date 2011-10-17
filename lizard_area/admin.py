@@ -1,18 +1,30 @@
-from django.contrib import admin
+from django.contrib.gis import admin
 
 from lizard_area.models import GeoObject
 from lizard_area.models import GeoObjectGroup
 
 from lizard_area.models import Category
+from lizard_area.models import MapnikXMLStylesheet
 
 from lizard_area.models import AreaAdministrator
 from lizard_area.models import Communique
 
 
-admin.site.register(GeoObject)
-admin.site.register(GeoObjectGroup)
+class GeoObjectInline(admin.TabularInline):
+    model = GeoObject
+
+
+class GeoObjectGroupAdmin(admin.ModelAdmin):
+    inlines = [
+        GeoObjectInline,
+        ]
+
+
+# admin.site.register(GeoObject)
+admin.site.register(GeoObjectGroup, GeoObjectGroupAdmin)
 
 admin.site.register(Category)
+admin.site.register(MapnikXMLStylesheet)
 
 admin.site.register(AreaAdministrator)
 admin.site.register(Communique)

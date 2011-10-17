@@ -23,7 +23,7 @@ class GeoObjectGroup(models.Model):
     TODO: Automatically fill in slug
     """
     name = models.CharField(max_length=128)
-    slug = models.SlugField(unique=True)
+    # slug = models.SlugField(unique=True)
     # legend = models.ForeignKey(LegendClass, null=True, blank=True)
     # "source"
 
@@ -60,6 +60,18 @@ class GeoObject(AL_Node):
 ############################
 
 
+class MapnikXMLStylesheet(models.Model):
+    """
+    Mapnik styles in XML can be uploaded
+    """
+    name = models.CharField(max_length=128)
+    source_file = models.FileField(
+        upload_to="lizard_area/mapnik_xml_stylesheets/")
+
+    def __unicode__(self):
+        return self.name
+
+
 class Category(AL_Node):
     """
     Categories that are displayed in the ui.
@@ -70,6 +82,9 @@ class Category(AL_Node):
         GeoObjectGroup, null=True, blank=True)
 
     parent = models.ForeignKey('Category', blank=True, null=True)
+    mapnik_xml_style_sheet = models.ForeignKey(
+        MapnikXMLStylesheet,
+        blank=True, null=True)
 
     # For treebeard.
     node_order_by = ['name']
@@ -82,18 +97,6 @@ class Category(AL_Node):
 
     def get_absolute_url(self):
         return reverse('lizard-area:api:category', kwargs={'slug': self.slug})
-
-
-# class MapnikStyle(models.Model):
-#     """
-#     Mapnik styles in XML can be uploaded
-#     """
-#     name = models.CharField(max_length=128, unique=True)
-#     slug = models.SlugField()
-#     source_file = models.FileField()
-
-#     def __unicode__(self):
-#         return self.name
 
 
 #############################

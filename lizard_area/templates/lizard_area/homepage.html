@@ -4,13 +4,21 @@
 {% load utility %}
 
 {% block sidebar %}
-<div class="sidebarbox sidebarbox-stretched">
-  <h2>API test</h2>
-  <div class="rest-api-container">
-    <a class="rest-api" href="{% url lizard-area:api:category slug="krw-waterlichamen" %}">
-      Loading...
-    </a>
-  </div>
+<div class="sidebarbox sidebarbox-stretched automatic-tree filetree pane">
+  <h2>Categories</h2>
+  <ul>
+    {% for category in view.categories %}
+    <li class="workspace-acceptable file"
+        data-name="{{ category.name }}"
+        data-adapter-class="adapter_area"
+        data-adapter-layer-json='{"category_slug":"{{ category.slug }}"}'
+        >
+      {{ category.name }}
+    </li>
+    {% empty %}
+    <li>Geen categorieen beschikbaar.</li>
+    {% endfor %}
+  </ul>
 </div>
 
 {% workspace_edit view.workspace_edit %}
