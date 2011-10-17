@@ -3,10 +3,12 @@ Adapter for areas
 """
 import mapnik
 
+from django.conf import settings
+
 from lizard_map import adapter
 from lizard_map import coordinates
 from lizard_map import workspace
-from django.conf import settings
+from lizard_area.models import Category
 
 
 class AdapterArea(workspace.WorkspaceItemAdapter):
@@ -24,6 +26,7 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
         """
         layers = []
         styles = {}
+        category = Category.objects.get(slug=self.category_slug)
 
         query = (
             """
@@ -34,7 +37,7 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
                geoobject.geo_object_group_id = geoobjectgroup.id and
                geoobjectgroup.id = cat_geoobjectgroup.geoobjectgroup_id and
                cat_geoobjectgroup.category_id = category.id and
-               category.slug = '%s') data""" % self.category_slug)
+               category.slug = '%s') data""" % category.slug)
 
         default_database = settings.DATABASES['default']
         datasource = mapnik.PostGIS(
@@ -52,16 +55,23 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
         #     file=self.shape_filename)
         layer.datasource = datasource
 
-        area_looks = mapnik.PolygonSymbolizer(mapnik.Color("#ff8877"))
-        line_looks = mapnik.LineSymbolizer(mapnik.Color('#997766'), 1)
+        if category.mapnik_xml_style_sheet:
+            dummy_map = mapnik.Map(100, 100)
+            area_style = mapnik.load_map_from_string(
+                dummy_map,
+                str(category.mapnik_xml_style_sheet.style))
+            print area_style
+        else:
+            area_looks = mapnik.PolygonSymbolizer(mapnik.Color("#ff8877"))
+            line_looks = mapnik.LineSymbolizer(mapnik.Color('#997766'), 1)
 
-        area_looks.fill_opacity = 0.5
-        layout_rule = mapnik.Rule()
-        layout_rule.symbols.append(area_looks)
-        layout_rule.symbols.append(line_looks)
-        area_style = mapnik.Style()
+            area_looks.fill_opacity = 0.5
+            layout_rule = mapnik.Rule()
+            layout_rule.symbols.append(area_looks)
+            layout_rule.symbols.append(line_looks)
+            area_style = mapnik.Style()
 
-        area_style.rules.append(layout_rule)
+            area_style.rules.append(layout_rule)
 
         # if self.waterbody_slug:
         #     # light up area

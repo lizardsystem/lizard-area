@@ -4,7 +4,7 @@ from lizard_area.models import GeoObject
 from lizard_area.models import GeoObjectGroup
 
 from lizard_area.models import Category
-from lizard_area.models import MapnikXMLStylesheet
+from lizard_area.models import MapnikXMLStyleSheet
 
 from lizard_area.models import AreaAdministrator
 from lizard_area.models import Communique
@@ -24,7 +24,7 @@ class GeoObjectGroupAdmin(admin.ModelAdmin):
 admin.site.register(GeoObjectGroup, GeoObjectGroupAdmin)
 
 admin.site.register(Category)
-admin.site.register(MapnikXMLStylesheet)
+admin.site.register(MapnikXMLStyleSheet)
 
 admin.site.register(AreaAdministrator)
 admin.site.register(Communique)

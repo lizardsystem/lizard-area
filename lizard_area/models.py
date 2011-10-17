@@ -23,7 +23,7 @@ class GeoObjectGroup(models.Model):
     TODO: Automatically fill in slug
     """
     name = models.CharField(max_length=128)
-    # slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True)
     # legend = models.ForeignKey(LegendClass, null=True, blank=True)
     # "source"
 
@@ -60,16 +60,39 @@ class GeoObject(AL_Node):
 ############################
 
 
-class MapnikXMLStylesheet(models.Model):
+class MapnikXMLStyleSheet(models.Model):
     """
     Mapnik styles in XML can be uploaded
     """
     name = models.CharField(max_length=128)
+    style = models.TextField(
+        default='', null=True, blank=True,
+        help_text=('Dit veld wordt indien leeg '
+                   'gevuld met de inhoud van het bronbestand.'))
     source_file = models.FileField(
-        upload_to="lizard_area/mapnik_xml_stylesheets/")
+        upload_to="lizard_area/mapnik_xml_stylesheets/",
+        help_text='Bronbestand.')
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        """
+        Load source file in field style and save if style is
+        empty.
+
+        The original file is stored in source_file.
+        """
+        if self.style:
+            super(MapnikXMLStyleSheet, self).save(*args, **kwargs)
+        else:
+            # Load file
+            super(MapnikXMLStyleSheet, self).save(*args, **kwargs)
+            f = open(self.source_file.path, 'r')
+            for line in f.readlines():
+                self.style += line
+            f.close()
+            return super(MapnikXMLStyleSheet, self).save(*args, **kwargs)
 
 
 class Category(AL_Node):
@@ -83,7 +106,7 @@ class Category(AL_Node):
 
     parent = models.ForeignKey('Category', blank=True, null=True)
     mapnik_xml_style_sheet = models.ForeignKey(
-        MapnikXMLStylesheet,
+        MapnikXMLStyleSheet,
         blank=True, null=True)
 
     # For treebeard.
