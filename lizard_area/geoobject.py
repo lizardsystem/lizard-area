@@ -9,13 +9,13 @@ from django.template.defaultfilters import slugify
 from django.contrib.gis.geos import GEOSGeometry
 from osgeo import ogr
 
-from lizard_area.models import Communique
+from lizard_area.models import Area
 from lizard_area.models import GeoObjectGroup
 
 logger = logging.getLogger(__name__)
 
 
-def import_shapefile_communique(shapefile_filename, user):
+def import_shapefile_area(shapefile_filename, user, data_administrator):
     """
     Load shapefile with communique and put it in Communique(GeoObject)
     and GeoObjectGroup
@@ -54,25 +54,33 @@ def import_shapefile_communique(shapefile_filename, user):
         # geom.FlattenTo2D()
         # import pdb;pdb.set_trace()
 
-        kwargs = {
-            'ident': feature.GetField(feature.GetFieldIndex('OWAIDENT')),
-            'geometry': GEOSGeometry(geom.ExportToWkt(), srid=4326),
-            'geo_object_group': geo_object_group,
-
-            # Communique
-            'name': '%s ' % feature.GetField(feature.GetFieldIndex('OWANAAM'))
-        }
-        # Afvoergebieden
+        # KRW Waterlichamen merge
         # kwargs = {
-        #     'ident': feature.GetField(feature.GetFieldIndex('GAFIDENT')),
+        #     'ident': feature.GetField(feature.GetFieldIndex('OWAIDENT')),
         #     'geometry': GEOSGeometry(geom.ExportToWkt(), srid=4326),
         #     'geo_object_group': geo_object_group,
 
         #     # Communique
-        #     'name': '%s ' % feature.GetField(feature.GetFieldIndex('GAFNAAM')),
-        #     'code': feature.GetField(feature.GetFieldIndex('GAFCODE')),
+        #     'name': '%s ' % feature.GetField(feature.GetFieldIndex('OWANAAM')),
+
+        #     # Area
+        #     'data_administrator': data_administrator,
+        #     'area_class': Area.AREA_CLASS_KRW_WATERLICHAAM,
         # }
-        geo_object = Communique(**kwargs)
+        # Afvoergebieden
+        kwargs = {
+            'ident': feature.GetField(feature.GetFieldIndex('GAFIDENT')),
+            'geometry': GEOSGeometry(geom.ExportToWkt(), srid=4326),
+            'geo_object_group': geo_object_group,
+
+            # Communique
+            'name': '%s ' % feature.GetField(feature.GetFieldIndex('GAFNAAM')),
+            'code': feature.GetField(feature.GetFieldIndex('GAFCODE')),
+            # Area
+            'data_administrator': data_administrator,
+            'area_class': Area.AREA_CLASS_AAN_AFVOERGEBIED,
+        }
+        geo_object = Area(**kwargs)
         geo_object.save()
         number_of_features += 1
 

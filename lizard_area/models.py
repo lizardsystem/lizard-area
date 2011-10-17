@@ -29,6 +29,7 @@ class GeoObjectGroup(models.Model):
 
     created_by = models.ForeignKey(User)
     last_modified = models.DateTimeField(auto_now=True)
+    source_log = models.TextField(null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -38,7 +39,7 @@ class GeoObjectGroup(models.Model):
                        kwargs={'pk': self.pk})
 
 
-class GeoObject(AL_Node):
+class GeoObject(models.Model):
     """
     Geo objects storage.
 
@@ -124,15 +125,13 @@ class Category(AL_Node):
 
 #############################
 
-class AreaAdministrator(models.Model):
+class DataAdministrator(models.Model):
     """
-    Administrators of areas.
+    Administrators of all kinds of data.
 
     The administrator can be an organization.
     """
     name = models.CharField(max_length=128, unique=True)
-    geo_object_groups = models.ManyToManyField(
-        GeoObjectGroup, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -176,3 +175,36 @@ class Communique(GeoObject):
 
     def get_absolute_url(self):
         return reverse('lizard-area:api:communique', kwargs={'pk': self.pk})
+
+
+class Area(Communique, AL_Node):
+    """
+    KRW waterlichamen en (deel) aan-/afvoergebieden.
+    """
+
+    AREA_CLASS_KRW_WATERLICHAAM = 1
+    AREA_CLASS_AAN_AFVOERGEBIED = 2
+    AREA_CLASS_DEEL_AAN_AFVOERGEBIED = 3
+
+    AREA_CLASS_CHOICES = (
+        (AREA_CLASS_KRW_WATERLICHAAM, 'krw waterlichaam'),
+        (AREA_CLASS_AAN_AFVOERGEBIED, 'aan-/afvoer gebied'),
+        (AREA_CLASS_DEEL_AAN_AFVOERGEBIED, 'deel aan-/afvoergebied'), )
+
+    AREA_CLASS_DICT = dict(AREA_CLASS_CHOICES)
+
+    parent = models.ForeignKey('Area', null=True, blank=True)
+    data_administrator = models.ForeignKey(DataAdministrator)
+    area_class = models.IntegerField(
+        choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
+
+    # For treebeard.
+    node_order_by = ['name']
+
+    class Meta:
+        ordering = ('name', )
+
+    def __unicode__(self):
+        return '%s (%s - %s)' % (
+            self.name, self.AREA_CLASS_DICT[self.area_class],
+            self.data_administrator)

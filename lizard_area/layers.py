@@ -56,6 +56,7 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
         layer.datasource = datasource
 
         if category.mapnik_xml_style_sheet:
+            # This part doesn't work yet.
             dummy_map = mapnik.Map(100, 100)
             area_style = mapnik.load_map_from_string(
                 dummy_map,

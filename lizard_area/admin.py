@@ -6,8 +6,9 @@ from lizard_area.models import GeoObjectGroup
 from lizard_area.models import Category
 from lizard_area.models import MapnikXMLStyleSheet
 
-from lizard_area.models import AreaAdministrator
+from lizard_area.models import DataAdministrator
 from lizard_area.models import Communique
+from lizard_area.models import Area
 
 
 class GeoObjectInline(admin.TabularInline):
@@ -20,12 +21,16 @@ class GeoObjectGroupAdmin(admin.ModelAdmin):
         ]
 
 
+class AreaAdmin(admin.ModelAdmin):
+    list_filter = ('data_administrator', 'area_class', )
+
+
 # admin.site.register(GeoObject)
 admin.site.register(GeoObjectGroup, GeoObjectGroupAdmin)
 
 admin.site.register(Category)
 admin.site.register(MapnikXMLStyleSheet)
 
-admin.site.register(AreaAdministrator)
+admin.site.register(DataAdministrator)
 admin.site.register(Communique)
-
+admin.site.register(Area, AreaAdmin)
