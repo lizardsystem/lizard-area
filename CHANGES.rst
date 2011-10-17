@@ -5,6 +5,8 @@ Changelog of lizard-area
 0.1 (unreleased)
 ----------------
 
+- Created initial adapter.
+
 - Created initial api.
 
 - Created geoobject.py helper library.
