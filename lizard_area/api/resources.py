@@ -18,6 +18,8 @@ class CommuniqueResource(ModelResource):
     ordering = ('name', )
 
     def __init__(self, *args, **kwargs):
+        print '###############################'
+        print args, kwargs
         super(CommuniqueResource, self).__init__(*args, **kwargs)
         self.fields = (
             'ident', 'geometry', 'geo_object_group', 'name', 'code',

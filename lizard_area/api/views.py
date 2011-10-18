@@ -8,17 +8,21 @@ from djangorestframework.views import View
 from lizard_area.models import Area
 from lizard_area.models import Category
 
+from lizard_area.models import CURRENT_APP
+
 
 class RootView(View):
     """
     Startpoint.
     """
-
     def get(self, request):
         return {
-            "categories": reverse('lizard-area:api:category-root'),
-            "krw-areas": reverse('lizard-area:api:krw-areas'),
-            "catchment-areas": reverse('lizard-area:api:catchment-areas'),
+            "categories": reverse(
+                'api:category-root', current_app=CURRENT_APP),
+            "krw-areas": reverse(
+                'api:krw-areas', current_app=CURRENT_APP),
+            "catchment-areas": reverse(
+                'api:catchment-areas', current_app=CURRENT_APP),
             }
 
 

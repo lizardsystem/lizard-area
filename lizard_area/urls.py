@@ -10,6 +10,8 @@ from lizard_area.views import Homepage
 
 admin.autodiscover()
 
+API_URL_NAME = 'lizard-area:api:root'
+
 urlpatterns = patterns(
     '',
     # (r'^admin/', include(admin.site.urls)),

@@ -8,6 +8,8 @@ from django.core.urlresolvers import reverse
 
 logger = logging.getLogger(__name__)
 
+CURRENT_APP = 'lizard-area'  # For use in reverse.
+
 
 class GeoObjectGroup(models.Model):
     """
@@ -35,8 +37,8 @@ class GeoObjectGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('lizard-area:api:geo_object_group',
-                       kwargs={'pk': self.pk})
+        return reverse('api:geo_object_group',
+                       kwargs={'pk': self.pk}, current_app=CURRENT_APP)
 
 
 class GeoObject(models.Model):
@@ -120,7 +122,8 @@ class Category(AL_Node):
         return '%s (%s)' % (self.name, self.slug)
 
     def get_absolute_url(self):
-        return reverse('lizard-area:api:category', kwargs={'slug': self.slug})
+        return reverse('api:category', kwargs={'slug': self.slug},
+                       current_app=CURRENT_APP)
 
 
 #############################
@@ -219,7 +222,8 @@ class Communique(GeoObject):
         return '%s - %s' % (self.ident, self.name)
 
     def get_absolute_url(self):
-        return reverse('lizard-area:api:communique', kwargs={'pk': self.pk})
+        return reverse('api:communique', kwargs={'pk': self.pk},
+                       current_app=CURRENT_APP)
 
 
 class Area(Communique, AL_Node):
@@ -255,4 +259,5 @@ class Area(Communique, AL_Node):
             self.data_administrator)
 
     def get_absolute_url(self):
-        return reverse('lizard-area:api:area', kwargs={'pk': self.pk})
+        return reverse('api:area', kwargs={'pk': self.pk},
+                       current_app=CURRENT_APP)
