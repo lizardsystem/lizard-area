@@ -2,6 +2,7 @@
 # Copyright 2011 Nelen & Schuurmans
 import logging
 
+from django.db import transaction
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
@@ -16,6 +17,7 @@ class Command(BaseCommand):
     args = "<username> <data-administrator> <filename>"
     help = "Import shapefile."
 
+    @transaction.commit_on_success
     def handle(self, *args, **options):
         user = User.objects.get(username=args[0])
         data_administrator = DataAdministrator.objects.get(name=args[1])

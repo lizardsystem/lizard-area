@@ -125,16 +125,61 @@ class Category(AL_Node):
 
 #############################
 
-class DataAdministrator(models.Model):
+class NameAbstract(models.Model):
+    """
+    Abstract model with only a name as property.
+    """
+    name = models.CharField(max_length=128, unique=True)
+
+    class Meta:
+        abstract = True
+
+    def __unicode__(self):
+        return self.name
+
+
+class DataAdministrator(NameAbstract):
     """
     Administrators of all kinds of data.
 
     The administrator can be an organization.
     """
-    name = models.CharField(max_length=128, unique=True)
+    pass
 
-    def __unicode__(self):
-        return self.name
+
+class AreaCode(NameAbstract):
+    """Area code, used by communique."""
+    pass
+
+
+class Status(NameAbstract):
+    """Area status, used by communique."""
+    pass
+
+
+class AreaType(NameAbstract):
+    """Area type, used by communique."""
+    pass
+
+
+class Province(NameAbstract):
+    """Province, used by communique."""
+    pass
+
+
+class Municipality(NameAbstract):
+    """Municipality, used by communique."""
+    pass
+
+
+class Basin(NameAbstract):
+    """Basin ("stroomgebied"), used by communique."""
+    pass
+
+
+class WaterManagementArea(NameAbstract):
+    """Water management area ("waterbeheergebied"), used by communique."""
+    pass
 
 
 class Communique(GeoObject):
@@ -149,26 +194,26 @@ class Communique(GeoObject):
     name = models.CharField(max_length=128)
 
     # i.e. "NL13_11"
-    code = models.CharField(max_length=128, null=True, blank=True)
+    code = models.ForeignKey(AreaCode, null=True, blank=True)
 
     # i.e. "Kunstmatig"
-    status = models.CharField(max_length=128, null=True, blank=True)
+    status = models.ForeignKey(Status, null=True, blank=True)
 
     # i.e. "M27 - Matig grote ondiepe laagveenplassen"
-    area_type = models.CharField(max_length=128, null=True, blank=True)
+    area_type = models.ForeignKey(AreaType, null=True, blank=True)
 
     # i.e. "Zuid-Holland"
-    province = models.CharField(max_length=128, null=True, blank=True)
+    province = models.ForeignKey(Province, null=True, blank=True)
 
     # i.e. "Reeuwijk"
-    municipality = models.CharField(max_length=128, null=True, blank=True)
+    municipality = models.ForeignKey(Municipality, null=True, blank=True)
 
     # Stroomgebied. i.e. "Rijn-West"
-    basin = models.CharField(max_length=128, null=True, blank=True)
+    basin = models.ForeignKey(Basin, null=True, blank=True)
 
     # Waterbeheergebied. i.e. "Hoogheemraadschap van Rijnland"
-    watermanagementarea = models.CharField(
-        max_length=128, null=True, blank=True)
+    watermanagementarea = models.ForeignKey(
+        WaterManagementArea, null=True, blank=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.ident, self.name)

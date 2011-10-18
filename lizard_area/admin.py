@@ -10,6 +10,14 @@ from lizard_area.models import DataAdministrator
 from lizard_area.models import Communique
 from lizard_area.models import Area
 
+from lizard_area.models import AreaCode
+from lizard_area.models import Status
+from lizard_area.models import AreaType
+from lizard_area.models import Province
+from lizard_area.models import Municipality
+from lizard_area.models import Basin
+from lizard_area.models import WaterManagementArea
+
 
 class GeoObjectInline(admin.TabularInline):
     model = GeoObject
@@ -34,3 +42,11 @@ admin.site.register(MapnikXMLStyleSheet)
 admin.site.register(DataAdministrator)
 admin.site.register(Communique)
 admin.site.register(Area, AreaAdmin)
+
+admin.site.register(AreaCode)
+admin.site.register(Status)
+admin.site.register(AreaType)
+admin.site.register(Province)
+admin.site.register(Municipality)
+admin.site.register(Basin)
+admin.site.register(WaterManagementArea)
