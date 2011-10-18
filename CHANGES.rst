@@ -5,6 +5,8 @@ Changelog of lizard-area
 0.1 (unreleased)
 ----------------
 
+- Created initial tests.
+
 - Created initial migration.
 
 - Created initial adapter.
