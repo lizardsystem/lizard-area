@@ -41,6 +41,7 @@ SITE_ID = 1
 INSTALLED_APPS = [
     'lizard_area',
     'lizard_ui',
+    'lizard_map',
     'treebeard',
     'djangorestframework',
     'staticfiles',

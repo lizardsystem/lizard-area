@@ -16,7 +16,7 @@ install_requires = [
     'django-treebeard',
     'djangorestframework',
     'lizard-ui >= 3.0',
-    'lizard-map',
+    'lizard-map >= 3.2',
     'pkginfo',
     ],
 
