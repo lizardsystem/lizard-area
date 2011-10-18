@@ -208,3 +208,6 @@ class Area(Communique, AL_Node):
         return '%s (%s - %s)' % (
             self.name, self.AREA_CLASS_DICT[self.area_class],
             self.data_administrator)
+
+    def get_absolute_url(self):
+        return reverse('lizard-area:api:area', kwargs={'pk': self.pk})
