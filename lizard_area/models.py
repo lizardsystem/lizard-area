@@ -37,7 +37,7 @@ class GeoObjectGroup(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('api:geo_object_group',
+        return reverse('lizard-area:api:geo_object_group',
                        kwargs={'pk': self.pk}, current_app=CURRENT_APP)
 
 
@@ -122,7 +122,7 @@ class Category(AL_Node):
         return '%s (%s)' % (self.name, self.slug)
 
     def get_absolute_url(self):
-        return reverse('api:category', kwargs={'slug': self.slug},
+        return reverse('lizard-area:api:category', kwargs={'slug': self.slug},
                        current_app=CURRENT_APP)
 
 
@@ -222,7 +222,7 @@ class Communique(GeoObject):
         return '%s - %s' % (self.ident, self.name)
 
     def get_absolute_url(self):
-        return reverse('api:communique', kwargs={'pk': self.pk},
+        return reverse('lizard-area:api:communique', kwargs={'pk': self.pk},
                        current_app=CURRENT_APP)
 
 
@@ -259,5 +259,5 @@ class Area(Communique, AL_Node):
             self.data_administrator)
 
     def get_absolute_url(self):
-        return reverse('api:area', kwargs={'pk': self.pk},
+        return reverse('lizard-area:api:area', kwargs={'pk': self.pk},
                        current_app=CURRENT_APP)

@@ -18,11 +18,11 @@ class RootView(View):
     def get(self, request):
         return {
             "categories": reverse(
-                'api:category-root', current_app=CURRENT_APP),
+                'lizard-area:api:category-root', current_app=CURRENT_APP),
             "krw-areas": reverse(
-                'api:krw-areas', current_app=CURRENT_APP),
+                'lizard-area:api:krw-areas', current_app=CURRENT_APP),
             "catchment-areas": reverse(
-                'api:catchment-areas', current_app=CURRENT_APP),
+                'lizard-area:api:catchment-areas', current_app=CURRENT_APP),
             }
 
 
