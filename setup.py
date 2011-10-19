@@ -17,6 +17,7 @@ install_requires = [
     'djangorestframework',
     'lizard-ui >= 3.0',
     'lizard-map >= 3.2',
+    'lizard-geo',
     'pkginfo',
     ],
 

@@ -2,63 +2,13 @@
 import logging
 from treebeard.al_tree import AL_Node
 
-from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 
+from lizard_geo.models import GeoObject
+from lizard_geo.models import GeoObjectGroup
+
 logger = logging.getLogger(__name__)
-
-CURRENT_APP = 'lizard-area'  # For use in reverse.
-
-
-class GeoObjectGroup(models.Model):
-    """
-    Geo objects are grouped.
-
-    These are starting points to navigate through all geo objects.
-
-    Examples of groups:
-    - Alle aan-/afvoergebieden van een waterschap
-    - Alle deel aan-/afvoergebieden van 1 deelgebied
-    - Alle krw waterlichamen
-
-    TODO: Automatically fill in slug
-    """
-    name = models.CharField(max_length=128)
-    slug = models.SlugField(unique=True)
-    # legend = models.ForeignKey(LegendClass, null=True, blank=True)
-    # "source"
-
-    created_by = models.ForeignKey(User)
-    last_modified = models.DateTimeField(auto_now=True)
-    source_log = models.TextField(null=True, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('lizard_area_api_geo_object_group',
-                       kwargs={'pk': self.pk}, current_app=CURRENT_APP)
-
-
-class GeoObject(models.Model):
-    """
-    Geo objects storage.
-
-    Ident MUST be unique. When importing shapefiles references are
-    done using ident.
-
-    Parents are used for deel aan-/afvoergebieden.
-    """
-    ident = models.CharField(max_length=16, unique=True)
-    geometry = models.GeometryField(srid=4326)
-    geo_object_group = models.ForeignKey(GeoObjectGroup)
-    objects = models.GeoManager()
-
-    # verwijzing naar "bron locatie" string
-
-    def __unicode__(self):
-        return '%s (%s)' % (self.ident, self.geo_object_group)
 
 ############################
 
@@ -122,8 +72,7 @@ class Category(AL_Node):
         return '%s (%s)' % (self.name, self.slug)
 
     def get_absolute_url(self):
-        return reverse('lizard_area_api_category', kwargs={'slug': self.slug},
-                       current_app=CURRENT_APP)
+        return reverse('lizard_area_api_category', kwargs={'slug': self.slug})
 
 
 #############################
@@ -222,8 +171,7 @@ class Communique(GeoObject):
         return '%s - %s' % (self.ident, self.name)
 
     def get_absolute_url(self):
-        return reverse('lizard_area_api_communique', kwargs={'pk': self.pk},
-                       current_app=CURRENT_APP)
+        return reverse('lizard_area_api_communique', kwargs={'pk': self.pk})
 
 
 class Area(Communique, AL_Node):
@@ -259,5 +207,4 @@ class Area(Communique, AL_Node):
             self.data_administrator)
 
     def get_absolute_url(self):
-        return reverse('lizard_area_api_area', kwargs={'pk': self.pk},
-                       current_app=CURRENT_APP)
+        return reverse('lizard_area_api_area', kwargs={'pk': self.pk})

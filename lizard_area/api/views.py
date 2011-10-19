@@ -2,14 +2,11 @@
 API views not coupled to models.
 """
 from django.core.urlresolvers import reverse
-from django.core.urlresolvers import resolve
 
 from djangorestframework.views import View
 
 from lizard_area.models import Area
 from lizard_area.models import Category
-
-from lizard_area.models import CURRENT_APP
 
 
 class RootView(View):
@@ -17,8 +14,7 @@ class RootView(View):
     Startpoint.
     """
     def get(self, request):
-        print reverse('lizard_area_homepage')
-        return {
+         return {
             "categories": reverse(
                 'lizard_area_api_category_root'),
             "krw-areas": reverse(

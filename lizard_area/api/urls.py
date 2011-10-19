@@ -9,7 +9,6 @@ from djangorestframework.views import InstanceModelView
 from lizard_area.api.resources import AreaResource
 from lizard_area.api.resources import CategoryResource
 from lizard_area.api.resources import CommuniqueResource
-from lizard_area.api.resources import GeoObjectGroupResource
 
 from lizard_area.api.views import RootView
 from lizard_area.api.views import CategoryRootView
@@ -44,7 +43,4 @@ urlpatterns = patterns(
     url(r'^area/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=AreaResource),
         name=NAME_PREFIX + 'area'),
-    url(r'^geo_object_group/(?P<pk>[^/]+)/$',
-        InstanceModelView.as_view(resource=GeoObjectGroupResource),
-        name=NAME_PREFIX + 'geo_object_group'),
     )

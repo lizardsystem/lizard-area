@@ -12,7 +12,6 @@ from lizard_area.api.views import CatchmentAreaView
 
 from lizard_area.api.resources import CommuniqueResource
 from lizard_area.api.resources import AreaResource
-from lizard_area.api.resources import GeoObjectGroupResource
 from lizard_area.api.resources import CategoryResource
 
 
@@ -34,5 +33,4 @@ class ApiTest(TestCase):
     def test_smoke_resource(self):
         CommuniqueResource(None)
         AreaResource(None)
-        GeoObjectGroupResource(None)
         CategoryResource(None)
