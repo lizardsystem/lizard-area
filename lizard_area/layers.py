@@ -30,8 +30,8 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
 
         query = (
             """
-          (select geometry from lizard_area_geoobject as geoobject,
-             lizard_area_geoobjectgroup as geoobjectgroup,
+          (select geometry from lizard_geo_geoobject as geoobject,
+             lizard_geo_geoobjectgroup as geoobjectgroup,
              lizard_area_category_geo_object_groups as cat_geoobjectgroup,
              lizard_area_category as category where
                geoobject.geo_object_group_id = geoobjectgroup.id and
