@@ -19,31 +19,32 @@ from lizard_area.api.views import CatchmentAreaView
 
 admin.autodiscover()
 
+NAME_PREFIX = 'lizard_area_api_'
 
 urlpatterns = patterns(
     '',
     url(r'^$',
         RootView.as_view(),
-        name='root'),
+        name=NAME_PREFIX + 'root'),
     url(r'^category/$',
         CategoryRootView.as_view(),
-        name='category-root'),
+        name=NAME_PREFIX + 'category_root'),
     url(r'^category/(?P<slug>[^/]+)/$',
         InstanceModelView.as_view(resource=CategoryResource),
-        name='category'),
+        name=NAME_PREFIX + 'category'),
     url(r'^krw-areas/$',
         KRWAreaView.as_view(),
-        name='krw-areas'),
+        name=NAME_PREFIX + 'krw_areas'),
     url(r'^catchment-areas/$',  # Aan-/afvoergebieden
         CatchmentAreaView.as_view(),
-        name='catchment-areas'),
+        name=NAME_PREFIX + 'catchment_areas'),
     url(r'^communique/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=CommuniqueResource),
-        name='communique'),
+        name=NAME_PREFIX + 'communique'),
     url(r'^area/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=AreaResource),
-        name='area'),
+        name=NAME_PREFIX + 'area'),
     url(r'^geo_object_group/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=GeoObjectGroupResource),
-        name='geo_object_group'),
+        name=NAME_PREFIX + 'geo_object_group'),
     )

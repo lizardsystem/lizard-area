@@ -10,13 +10,13 @@ from lizard_area.views import Homepage
 
 admin.autodiscover()
 
-API_URL_NAME = 'lizard-area:api:root'
+API_URL_NAME = 'lizard_area_api_root'
+NAME_PREFIX = 'lizard_area_'
 
 urlpatterns = patterns(
     '',
-    # (r'^admin/', include(admin.site.urls)),
-    url(r'^$', Homepage.as_view(), name='homepage'),
-    url(r'^api-view/$', ApiView.as_view(), name='api-view'),
-    (r'^api/', include('lizard_area.api.urls', namespace='api')),
+    url(r'^$', Homepage.as_view(), name=NAME_PREFIX + 'homepage'),
+    url(r'^api-view/$', ApiView.as_view(), name=NAME_PREFIX + 'api_view'),
+    (r'^api/', include('lizard_area.api.urls')),
     )
 urlpatterns += debugmode_urlpatterns()
