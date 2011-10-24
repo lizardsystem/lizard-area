@@ -16,27 +16,34 @@ SETTINGS_DIR = os.path.dirname(os.path.realpath(__file__))
 BUILDOUT_DIR = os.path.abspath(os.path.join(SETTINGS_DIR, '..'))
 LOGGING = setup_logging(BUILDOUT_DIR)
 
-# ENGINE: 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-# In case of geodatabase, prepend with:
-# django.contrib.gis.db.backends.(postgis)
+# Django supports the databases 'postgresql_psycopg2', 'postgresql', 'mysql',
+# 'sqlite3' and 'oracle'. If you use a geodatabase, Django supports the
+# following ones:
+#
+#   'django.contrib.gis.db.backends.postgis'
+#   'django.contrib.gis.db.backends.mysql'
+#   'django.contrib.gis.db.backends.oracle'
+#   'django.contrib.gis.db.backends.spatialite'
+
 DATABASES = {
-    # If you want to use another database, consider putting the database
-    # settings in localsettings.py. Otherwise, if you change the settings in
-    # the current file and commit them to the repository, other developers will
-    # also use these settings whether they have that database or not.
-    # One of those other developers is Jenkins, our continuous integration
-    # solution. Jenkins can only run the tests of the current application when
-    # the specified database exists. When the tests cannot run, Jenkins sees
-    # that as an error.
     'default': {
-        'NAME': 'lizard-area',
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'lizard-area.db',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'USER': 'buildout',
         'PASSWORD': 'buildout',
-        'HOST': 'localhost',  # empty string for localhost.
-        'PORT': '5432',  # empty string for default.
         }
     }
+
+# With regard to the database definitions above, if you want to use a different
+# database, consider putting its definition in localsettings.py. Otherwise, if
+# you change the definitions above and commit them (to the repository), other
+# developers will also have to use them.
+#
+# One of those other developers is Jenkins, our continuous integration
+# solution. Jenkins can only run the tests of the current application when the
+# specified database exists. When the tests cannot run, Jenkins sees that as an
+# error.
+
 SITE_ID = 1
 INSTALLED_APPS = [
     'lizard_area',
