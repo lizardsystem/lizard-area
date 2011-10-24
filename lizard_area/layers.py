@@ -30,8 +30,8 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
 
         query = (
             """
-          (select geometry from lizard_area_geoobject as geoobject,
-             lizard_area_geoobjectgroup as geoobjectgroup,
+          (select geometry from lizard_geo_geoobject as geoobject,
+             lizard_geo_geoobjectgroup as geoobjectgroup,
              lizard_area_category_geo_object_groups as cat_geoobjectgroup,
              lizard_area_category as category where
                geoobject.geo_object_group_id = geoobjectgroup.id and
@@ -56,6 +56,7 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
         layer.datasource = datasource
 
         if category.mapnik_xml_style_sheet:
+            # This part doesn't work yet.
             dummy_map = mapnik.Map(100, 100)
             area_style = mapnik.load_map_from_string(
                 dummy_map,
