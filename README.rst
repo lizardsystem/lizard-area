@@ -6,6 +6,46 @@ Introduction
 
 Store geo objects representing areas and manage them.
 
+Development installation
+------------------------
+
+The first time, you will have to run the bootstrap script to set up setuptools
+and buildout::
+
+    $> python bootstrap.py
+
+Then run buildout to set everything up::
+
+    $> bin/buildout
+
+Note that on Microsoft Windows it is called ``bin\buildout.exe``.
+
+You will have to re-run buildout when ``setup.py`` or ``buildout.cfg`` have
+been modified, for example directly by you or through an update of your working
+directory.
+
+The current package is installed as a "development package", so changes in .py
+files are automatically available (just like with ``python setup.py develop``).
+
+The app lizard-area uses a SpatiaLite database, although this will probably be
+overwritten at the site level. The repository already contains a SpatiaLite
+database, so you should not need to create one yourself. In case you want to
+create a new SpatiaLite database, execute the following command::
+
+  $> spatialite lizard-area.db < init_spatialite-2.3.sql
+  spatialite lizard-area.db < init_spatialite-2.3.sql
+  SpatiaLite version ..: 2.3.0	Supported Extensions:
+        - 'VirtualShape'        [direct Shapefile access]
+        - 'VirtualText          [direct CSV/TXT access]
+        - 'VirtualNetwork       [Dijkstra shortest path]
+        - 'RTree'               [Spatial Index - R*Tree]
+        - 'MbrCache'            [Spatial Index - MBR cache]
+        - 'VirtualFDO'          [FDO-OGR interoperability]
+        - 'SpatiaLite'          [Spatial SQL - OGC]
+  PROJ.4 version ......: Rel. 4.7.1, 23 September 2009
+  GEOS version ........: 3.1.0-CAPI-1.5.0
+
+The above snippet assumes you already have installed SpatiaLite.
 
 GeoObject
 ---------
