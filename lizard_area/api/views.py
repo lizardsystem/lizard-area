@@ -56,11 +56,35 @@ class CatchmentAreaView(View):
     Show catchment areas.
     """
     def get(self, request):
+
+        node = request.GET.get('node', 'root')
+
+        if node == 'root':
+            areas = Area.objects.filter(
+                    area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED)
+        else:
+            areas = Area.objects.filter(
+                    parent__ident=node)
+
+
         return {
             "areas": [
                 {'name': area.name,
+                 'id': area.ident,
+                 'leaf': area.get_children_count()==0,
+                 'parent': area.parent_id,
                  'url': area.get_absolute_url()}
-                for area in Area.objects.filter(
-                    area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED)
+                for area in areas
                 ]
             }
+
+
+class UserDataView(View):
+    """
+    Show catchment areas.
+    """
+    def get(self, request):
+
+        areas = GeoObject.objects.all()
+
+        extent = areas.transform(900913).extent()
