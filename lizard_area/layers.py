@@ -49,7 +49,7 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
             table=query.encode('ascii')
             )
 
-        layer = mapnik.Layer("Gebieden", coordinates.RD)
+        layer = mapnik.Layer("Gebieden", coordinates.WGS84)
         # TODO: ^^^ translation!
         # layer.datasource = mapnik.Shapefile(
         #     file=self.shape_filename)
