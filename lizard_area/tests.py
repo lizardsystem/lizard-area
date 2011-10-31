@@ -25,10 +25,13 @@ class ViewsTest(TestCase):
 
 class ApiTest(TestCase):
     def test_smoke_view(self):
-        RootView().get(None)
-        CategoryRootView().get(None)
-        KRWAreaView().get(None)
-        CatchmentAreaView().get(None)
+        class MockRequest(object):
+            GET = {}
+        mock_request = MockRequest()
+        RootView().get(mock_request)
+        CategoryRootView().get(mock_request)
+        KRWAreaView().get(mock_request)
+        CatchmentAreaView().get(mock_request)
 
     def test_smoke_resource(self):
         CommuniqueResource(None)
