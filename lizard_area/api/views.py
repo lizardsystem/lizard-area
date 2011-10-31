@@ -14,7 +14,7 @@ class RootView(View):
     Startpoint.
     """
     def get(self, request):
-         return {
+        return {
             "categories": reverse(
                 'lizard_area_api_category_root'),
             "krw-areas": reverse(
@@ -46,8 +46,7 @@ class KRWAreaView(View):
                 {'name': area.name,
                  'url': area.get_absolute_url()}
                 for area in Area.objects.filter(
-                    area_class=Area.AREA_CLASS_KRW_WATERLICHAAM)
-                ]
+                    area_class=Area.AREA_CLASS_KRW_WATERLICHAAM)]
             }
 
 
@@ -66,17 +65,14 @@ class CatchmentAreaView(View):
             areas = Area.objects.filter(
                     parent__ident=node)
 
-
         return {
             "areas": [
                 {'name': area.name,
                  'id': area.ident,
-                 'leaf': area.get_children_count()==0,
+                 'leaf': area.get_children_count() == 0,
                  'parent': area.parent_id,
                  'url': area.get_absolute_url()}
-                for area in areas
-                ]
-            }
+                for area in areas]}
 
 
 class UserDataView(View):
