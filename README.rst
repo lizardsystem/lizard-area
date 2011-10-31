@@ -47,13 +47,6 @@ create a new SpatiaLite database, execute the following command::
 
 The above snippet assumes you already have installed SpatiaLite.
 
-GeoObject
----------
-
-The model GeoObject contains all geometric objects. A geometric object
-can (but not necessarily) represent an area. All GeoObject have a
-foreign key to a GeoObjectGroup to make every single object managable.
-
 
 Import shapefile
 ----------------
@@ -61,6 +54,9 @@ Import shapefile
 Use the import_shape management command to import a shape file::
 
   $> bin/django import_shapefile <path-to-shapefile> <username> [parent-field]
+
+Please note that this command has to be tailored to the shape files at hand. It
+probably cannot not be used as is.
 
 A GeoObjectGroup will be created with all GeoObjects pointing to
 it. There will also be a category with all GeoObjects in it.
