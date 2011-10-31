@@ -24,7 +24,7 @@ class ViewsTest(TestCase):
 
 
 class ApiTest(TestCase):
-    def test_smoke_view(self):
+    def test_smoke_api(self):
         class MockRequest(object):
             GET = {}
         mock_request = MockRequest()
