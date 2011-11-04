@@ -41,14 +41,27 @@ class KRWAreaView(View):
     Show KRW areas.
     """
     def get(self, request):
+        node = request.GET.get('node', 'root')
+
+        if node == 'root':
+            areas = Area.objects.filter(
+                    area_class=Area.AREA_CLASS_KRW_WATERLICHAAM)
+        else:
+            areas = Area.objects.filter(
+                    parent__ident=node)
+
+
         return {
             "areas": [
                 {'name': area.name,
+                 'id': area.ident,
+                 'leaf': True,
+                 'parent': area.parent_id,
                  'url': area.get_absolute_url()}
-                for area in Area.objects.filter(
-                    area_class=Area.AREA_CLASS_KRW_WATERLICHAAM)
+                for area in areas
                 ]
             }
+        
 
 
 class CatchmentAreaView(View):
@@ -77,6 +90,37 @@ class CatchmentAreaView(View):
                 for area in areas
                 ]
             }
+
+class AreaSpecial(View):
+    """
+    Area information, specially created for dashboards.
+    """
+    def get(self, request, ident):
+
+        area = Area.objects.get(
+                    ident=ident)
+
+        output = {
+            "area": {
+                'name': area.name,
+                'id': area.ident,
+                'extent': area.extent(),
+                'parent':{},
+                'children': [{
+                    'id': child.ident,
+                    'name': child.name
+                } for child in area.get_children()],
+                'url': area.get_absolute_url()
+            }
+        }
+        if area.parent:
+            output['parent'] = {
+                    'id': area.parent.ident,
+                    'name': area.parent.name
+                }
+
+
+        return output
 
 
 class UserDataView(View):

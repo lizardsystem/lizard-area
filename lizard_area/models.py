@@ -194,6 +194,8 @@ class Area(Communique, AL_Node):
     data_administrator = models.ForeignKey(DataAdministrator)
     area_class = models.IntegerField(
         choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
+    objects = models.GeoManager()
+    
 
     # For treebeard.
     node_order_by = ['name']

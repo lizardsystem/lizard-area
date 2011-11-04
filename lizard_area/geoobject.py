@@ -16,7 +16,7 @@ from lizard_area.models import GeoObjectGroup
 logger = logging.getLogger(__name__)
 
 
-def import_shapefile_area(shapefile_filename, user, data_administrator):
+def import_shapefile_area(shapefile_filename, srid, user, data_administrator, file_type):
     """
     Load shapefile with communique and put it in Communique(GeoObject)
     and GeoObjectGroup
@@ -26,12 +26,12 @@ def import_shapefile_area(shapefile_filename, user, data_administrator):
     # shapefile_filename = resource_filename('lizard_rainapp',
     #                                        'shape/gemeenten2009.shp')
 
-    # original_srs = ogr.osr.SpatialReference()
-    # original_srs.ImportFromProj4(coordinates.RD)
-    # target_srs = ogr.osr.SpatialReference()
-    # target_srs.ImportFromEPSG(4326)
-    # coordinate_transformation = ogr.osr.CoordinateTransformation(
-    #     original_srs, target_srs)
+    original_srs = ogr.osr.SpatialReference()
+    original_srs.ImportFromEPSG(int(srid))
+    target_srs = ogr.osr.SpatialReference()
+    target_srs.ImportFromEPSG(4326)
+    coordinate_transformation = ogr.osr.CoordinateTransformation(
+         original_srs, target_srs)
 
     drv = ogr.GetDriverByName('ESRI Shapefile')
     source = drv.Open(shapefile_filename)
@@ -53,8 +53,8 @@ def import_shapefile_area(shapefile_filename, user, data_administrator):
     for feature in layer:
         geom = feature.GetGeometryRef()
         # Optional extra things to do with the shape
-        # geom.Transform(coordinate_transformation)
-        # geom.FlattenTo2D()
+        geom.Transform(coordinate_transformation)
+        geom.FlattenTo2D()
         # import pdb;pdb.set_trace()
 
         # # KRW Waterlichamen merge

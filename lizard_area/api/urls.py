@@ -14,7 +14,7 @@ from lizard_area.api.views import RootView
 from lizard_area.api.views import CategoryRootView
 from lizard_area.api.views import KRWAreaView
 from lizard_area.api.views import CatchmentAreaView
-
+from lizard_area.api.views import AreaSpecial
 
 admin.autodiscover()
 
@@ -43,4 +43,7 @@ urlpatterns = patterns(
     url(r'^area/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=AreaResource),
         name=NAME_PREFIX + 'area'),
+    url(r'^area_special/(?P<ident>[^/]+)/$',
+        AreaSpecial.as_view(),
+        name=NAME_PREFIX + 'area_special'),
     )
