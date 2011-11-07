@@ -58,16 +58,8 @@ class KRWAreaView(View):
                  'leaf': True,
                  'parent': area.parent_id,
                  'url': area.get_absolute_url()}
-<<<<<<< HEAD
-                for area in areas
-                ]
-=======
-                for area in Area.objects.filter(
-                    area_class=Area.AREA_CLASS_KRW_WATERLICHAAM)]
->>>>>>> 8f83fc229e0007e5d9de5594cebfbe51d95a4f65
+                for area in areas]
             }
-        
-
 
 class CatchmentAreaView(View):
     """
@@ -121,9 +113,29 @@ class AreaSpecial(View):
                     'name': area.parent.name
                 }
 
-
         return output
 
+class AreaCommuniqueView(View):
+    """
+    Area information, specially created for dashboards.
+    """
+    def get(self, request):
+
+        area = Area.objects.get(
+                    ident=self.CONTENT.get('object_id'))
+
+        return area.communique
+
+    def post(self, request, ident=None):
+
+        area = Area.objects.get(
+            ident=self.CONTENT.get('object_id', None))
+
+        communique = area.communique
+        communique.name = self.CONTENT.get('communique', '')
+        communique.save()
+
+        return { 'success': True}
 
 class UserDataView(View):
     """

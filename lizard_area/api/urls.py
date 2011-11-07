@@ -15,6 +15,7 @@ from lizard_area.api.views import CategoryRootView
 from lizard_area.api.views import KRWAreaView
 from lizard_area.api.views import CatchmentAreaView
 from lizard_area.api.views import AreaSpecial
+from lizard_area.api.views import AreaCommuniqueView
 
 admin.autodiscover()
 
@@ -40,6 +41,9 @@ urlpatterns = patterns(
     url(r'^communique/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=CommuniqueResource),
         name=NAME_PREFIX + 'communique'),
+    url(r'^area_communique/$',
+        AreaCommuniqueView.as_view(),
+        name=NAME_PREFIX + 'area_communique'),
     url(r'^area/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=AreaResource),
         name=NAME_PREFIX + 'area'),
