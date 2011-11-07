@@ -2,7 +2,7 @@ Changelog of lizard-area
 ===================================================
 
 
-0.1 (unreleased)
+0.1 (2011-11-07)
 ----------------
 
 - Created geoobjects and moved it to lizard-geo.
