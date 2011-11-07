@@ -195,7 +195,7 @@ class Area(Communique, AL_Node):
     area_class = models.IntegerField(
         choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
     objects = models.GeoManager()
-    
+
 
     # For treebeard.
     node_order_by = ['name']
@@ -210,3 +210,6 @@ class Area(Communique, AL_Node):
 
     def get_absolute_url(self):
         return reverse('lizard_area_api_area', kwargs={'pk': self.pk})
+
+    def extent(self):
+        return self.geometry.transform(900913, clone=True).extent

@@ -85,6 +85,7 @@ class CatchmentAreaView(View):
                  'url': area.get_absolute_url()}
                 for area in areas]}
 
+
 class AreaSpecial(View):
     """
     Area information, specially created for dashboards.
@@ -115,6 +116,7 @@ class AreaSpecial(View):
 
         return output
 
+
 class AreaCommuniqueView(View):
     """
     Area information, specially created for dashboards.
@@ -137,12 +139,11 @@ class AreaCommuniqueView(View):
 
         return { 'success': True}
 
+
 class UserDataView(View):
     """
     Show catchment areas.
     """
     def get(self, request):
-
-        areas = GeoObject.objects.all()
-
+        areas = Area.objects.all()
         extent = areas.transform(900913).extent()
