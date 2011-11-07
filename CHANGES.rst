@@ -2,8 +2,8 @@ Changelog of lizard-area
 ===================================================
 
 
-0.2 (unreleased)
-----------------
+0.1.1 (2011-11-07)
+------------------
 
 - Added Area.extent function (it disappeared).
 
