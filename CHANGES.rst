@@ -2,6 +2,12 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
+0.1.3 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
 0.1.2 (2011-12-07)
 ------------------
 
