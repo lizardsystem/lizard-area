@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.2 (unreleased)
+0.1.2 (2011-12-07)
 ------------------
 
 - Added functionality to area service for remote combobox communication.
