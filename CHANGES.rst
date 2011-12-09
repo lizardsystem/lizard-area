@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.3 (unreleased)
+0.1.3 (2011-12-09)
 ------------------
 
 - Changed datamodel, removed unused fields
