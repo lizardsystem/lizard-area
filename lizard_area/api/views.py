@@ -50,15 +50,32 @@ class KRWAreaView(View):
             areas = Area.objects.filter(
                     parent__ident=node)
 
+        query = request.GET.get('query', None)
+        id = request.GET.get('id', None)
+        if id == 'id':
+            use_id = True
+        else:
+            use_id = False
 
-        return {
-            "areas": [
-                {'name': area.name,
+        if query:
+            areas = areas.filter(name__istartswith=query)[0:25]
+
+        result = []
+        for area in areas:
+            rec = {'name': area.name,
                  'id': area.ident,
                  'leaf': True,
                  'parent': area.parent_id,
-                 'url': area.get_absolute_url()}
-                for area in areas]
+                 'url': area.get_absolute_url()
+            }
+            if use_id:
+                rec['id'] = area.id
+
+            result.append(rec)
+
+
+        return {
+            "areas": result
             }
 
 class CatchmentAreaView(View):
@@ -81,19 +98,32 @@ class CatchmentAreaView(View):
                     parent__ident=node)
 
         query = request.GET.get('query', None)
+        id = request.GET.get('id', None)
+        if id == 'id':
+            use_id = True
+        else:
+            use_id = False
+
         if query:
             areas = areas.filter(name__istartswith=query)[0:25]
 
+        result = []
+        for area in areas:
+            rec = {'name': area.name,
+                 'id': area.ident,
+                 'leaf': True,
+                 'parent': area.parent_id,
+                 'url': area.get_absolute_url()
+            }
+            if use_id:
+                rec['id'] = area.id
+
+            result.append(rec)
 
 
         return {
-            "areas": [
-                {'name': area.name,
-                 'id': area.ident,
-                 'leaf': area.is_leaf(),
-                 'parent': area.parent_id,
-                 'url': area.get_absolute_url()}
-                for area in areas]}
+            "areas": result
+            }
 
 
 class AreaSpecial(View):
@@ -134,20 +164,38 @@ class AreaCommuniqueView(View):
     def get(self, request):
 
         area = Area.objects.get(
-                    ident=self.CONTENT.get('object_id'))
+                    ident=request.GET.get('object_id'))
 
-        return area.communique
+        return {'data': area.communique.description}
 
     def post(self, request, ident=None):
 
         area = Area.objects.get(
             ident=self.CONTENT.get('object_id', None))
 
-        communique = area.communique
-        communique.name = self.CONTENT.get('communique', '')
-        communique.save()
+        area.communique.description = self.CONTENT.get('communique', '')
+        area.communique.save()
 
-        return { 'success': True}
+        return {'success': True, 'data': area.communique.description}
+
+
+class AreaPropertyView(View):
+    """
+    Area information, specially created for dashboards.
+    """
+    def get(self, request):
+
+        area = Area.objects.get(
+                    ident=request.GET.get('object_id'))
+
+
+        return [
+            {'name': 'Naam', 'value': area.name},
+            {'name': 'Ident', 'value': area.ident},
+            {'name': 'Status', 'value': '-'},
+            {'name': 'Waterbeheerder', 'value': 'Waternet'},
+        ]
+
 
 
 class UserDataView(View):

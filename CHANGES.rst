@@ -5,7 +5,9 @@ bin/buildoutChangelog of lizard-area
 0.1.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Changed datamodel, removed unused fields
+
+- Created api for communiqué and area properties
 
 
 0.1.2 (2011-12-07)
