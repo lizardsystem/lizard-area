@@ -8,6 +8,9 @@ from django.core.urlresolvers import reverse
 from lizard_geo.models import GeoObject
 from lizard_geo.models import GeoObjectGroup
 
+from lizard_security.manager import FilteredGeoManager
+from lizard_security.models import DataSet
+
 logger = logging.getLogger(__name__)
 
 ############################
@@ -143,7 +146,12 @@ class Area(Communique, AL_Node):
     data_administrator = models.ForeignKey(DataAdministrator)
     area_class = models.IntegerField(
         choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
-    objects = models.GeoManager()
+    supports_object_permissions = True
+    data_set = models.ForeignKey(DataSet,
+                                 null=True,
+                                 blank=True)
+    objects = FilteredGeoManager()
+    #objects = models.GeoManager()
 
     # For treebeard.
     node_order_by = ['name']
