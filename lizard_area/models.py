@@ -143,7 +143,9 @@ class Area(Communique, AL_Node):
     AREA_CLASS_DICT = dict(AREA_CLASS_CHOICES)
 
     parent = models.ForeignKey('Area', null=True, blank=True)
-    data_administrator = models.ForeignKey(DataAdministrator)
+    # data_administrator could be removed
+    data_administrator = models.ForeignKey(DataAdministrator,
+                                           blank=True, null=True)
     area_class = models.IntegerField(
         choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
     supports_object_permissions = True
