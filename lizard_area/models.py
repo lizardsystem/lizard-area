@@ -16,6 +16,12 @@ logger = logging.getLogger(__name__)
 ############################
 
 
+AREA_TYPES = (
+    ('aanafvoergebied', 'aanafvoergebied'),
+    ('peilgebied', 'peilgebied'),
+)
+
+
 class MapnikXMLStyleSheet(models.Model):
     """
     Mapnik styles in XML can be uploaded
@@ -118,6 +124,13 @@ class Communique(GeoObject):
 
     #
     description = models.TextField(default="")
+    watertype_krw = models.CharField(max_length=200, null=True, blank=True)
+    dt_latestchanged_krw = models.DateTimeField(help_text='Time changed by GV',
+                                            null=True, blank=True)
+    surfase = models.DecimalField(max_digits=10, decimal_places=1,
+                                  null=True, blank=True)
+    areasort = models.CharField(max_length=100, null=True, blank=True)
+    areasoort_krw = models.CharField(max_length=100, null=True, blank=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.ident, self.name)
@@ -145,15 +158,19 @@ class Area(Communique, AL_Node):
     parent = models.ForeignKey('Area', null=True, blank=True)
     # data_administrator could be removed
     data_administrator = models.ForeignKey(DataAdministrator,
-                                           blank=True, null=True)
+                                           null=True, blank=True)
     area_class = models.IntegerField(
         choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
+    is_active = models.BooleanField()
+    dt_created = models.DateTimeField()
+    dt_latestchanged = models.DateTimeField()
+    dt_latestsynchronized = models.DateTimeField()
+    area_type = models.CharField(max_length=50, choices=AREA_TYPES)
     supports_object_permissions = True
     data_set = models.ForeignKey(DataSet,
                                  null=True,
                                  blank=True)
     objects = FilteredGeoManager()
-    #objects = models.GeoManager()
 
     # For treebeard.
     node_order_by = ['name']
@@ -164,10 +181,50 @@ class Area(Communique, AL_Node):
     def __unicode__(self):
         return '%s (%s - %s)' % (
             self.name, self.AREA_CLASS_DICT[self.area_class],
-            self.data_administrator)
+            self.data_set.name)
 
     def get_absolute_url(self):
         return reverse('lizard_area_api_area', kwargs={'pk': self.pk})
 
     def extent(self):
         return self.geometry.transform(900913, clone=True).extent
+
+
+class AreaWFSConfiguration(models.Model):
+    """Configuration to synchronize areas."""
+
+    name = models.CharField(max_length=30, null=True, blank=True)
+    area_type = models.CharField(max_length=50, choices=AREA_TYPES)
+    maxFeatures = models.IntegerField(default=64000)
+    typeName = models.CharField(max_length=50)
+    cql_filter = models.CharField(max_length=50)
+    data_set = models.ForeignKey(DataSet)
+
+    def __unicode__(self):
+        return ("%s | %s" % (self.name, self.data_set))
+
+
+class SynchronizationHistory(models.Model):
+    """History of Syncronization run."""
+    dt_start = models.DateTimeField()
+    dt_finish = models.DateTimeField(null=True,
+                                     blank=True)
+    amount_updated = models.IntegerField(null=True,
+                                         blank=True)
+    amount_created = models.IntegerField(null=True,
+                                         blank=True)
+    amount_syncronized = models.IntegerField(null=True,
+                                             blank=True)
+    amount_deactivated = models.IntegerField(null=True,
+                                             blank=True)
+    amount_activated = models.IntegerField(null=True,
+                                           blank=True)
+    host = models.CharField(max_length=200, null=True, blank=True)
+    url = models.CharField(max_length=200, null=True, blank=True)
+    message = models.CharField(max_length=256)
+    username = models.CharField(max_length=100)
+    supports_object_permissions = True
+    data_set = models.ForeignKey(DataSet,
+                                 null=True,
+                                 blank=True)
+    objects = FilteredGeoManager()

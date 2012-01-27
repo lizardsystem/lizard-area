@@ -6,6 +6,7 @@ from lizard_area.models import GeoObjectGroup
 from lizard_area.models import Category
 from lizard_area.models import MapnikXMLStyleSheet
 
+from lizard_area.models import AreaWFSConfiguration
 from lizard_area.models import DataAdministrator
 from lizard_area.models import Communique
 from lizard_area.models import Area
@@ -33,3 +34,4 @@ admin.site.register(MapnikXMLStyleSheet)
 admin.site.register(DataAdministrator)
 admin.site.register(Communique)
 admin.site.register(Area, AreaAdmin)
+admin.site.register(AreaWFSConfiguration)

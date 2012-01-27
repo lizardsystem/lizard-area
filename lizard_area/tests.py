@@ -2,6 +2,10 @@
 
 from django.test import TestCase
 
+from django.contrib.gis.geos import MultiPolygon
+
+import json
+
 from lizard_area.views import ApiView
 from lizard_area.views import Homepage
 
@@ -13,6 +17,8 @@ from lizard_area.api.views import CatchmentAreaView
 from lizard_area.api.resources import CommuniqueResource
 from lizard_area.api.resources import AreaResource
 from lizard_area.api.resources import CategoryResource
+
+from lizard_area import sync_areas
 
 
 class ViewsTest(TestCase):
@@ -37,3 +43,14 @@ class ApiTest(TestCase):
         CommuniqueResource(None)
         AreaResource(None)
         CategoryResource(None)
+
+
+class AreaSynchronizationTest(TestCase):
+    def test_jsondict2mp(self):
+        geojson_file = open('testsources/areas_from_wfs.json')
+        content = json.loads(geojson_file)
+        if sync_areas.check_content(content) == False:
+            self.assertFalse(True)
+            return
+        mp = sync_areas.geodict2mp(content[0]['geometry'])
+        self.assetTrue(isinstance(mp, MultiPolygon))
