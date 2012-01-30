@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.4 (unreleased)
+0.1.4 (2012-01-30)
 ------------------
 
 - Added lizard-security to Area model.
