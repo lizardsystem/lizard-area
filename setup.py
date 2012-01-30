@@ -18,6 +18,7 @@ install_requires = [
     'lizard-ui >= 3.0',
     'lizard-map >= 3.2',
     'lizard-geo',
+    'lizard-security',
     'pkginfo',
     ],
 

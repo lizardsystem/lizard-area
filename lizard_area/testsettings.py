@@ -27,12 +27,14 @@ LOGGING = setup_logging(BUILDOUT_DIR)
 
 DATABASES = {
     'default': {
-        'NAME': 'lizard-area.db',
-        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
+        'NAME': 'area',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'USER': 'buildout',
         'PASSWORD': 'buildout',
-        }
+        'HOST': '127.0.0.1',  # empty string for localhost.
+        'PORT': '',  # empty string for default.
     }
+}
 
 # With regard to the database definitions above, if you want to use a different
 # database, consider putting its definition in localsettings.py. Otherwise, if
@@ -46,6 +48,7 @@ DATABASES = {
 
 SITE_ID = 1
 INSTALLED_APPS = [
+    'lizard_security',
     'lizard_area',
     'lizard_geo',
     'lizard_ui',

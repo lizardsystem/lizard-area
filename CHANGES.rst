@@ -7,6 +7,10 @@ bin/buildoutChangelog of lizard-area
 
 - Added lizard-security to Area model.
 
+- Fixes tests.
+
+- Switches to postgis for testing.
+
 
 0.1.3 (2011-12-09)
 ------------------
