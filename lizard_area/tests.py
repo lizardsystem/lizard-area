@@ -47,10 +47,8 @@ class ApiTest(TestCase):
 
 class AreaSynchronizationTest(TestCase):
     def test_jsondict2mp(self):
-        geojson_file = open('testsources/peilgebiedn_from_wfs.json')
-        content = json.loads(geojson_file)
-        if sync_areas.check_content(content) == False:
-            self.assertFalse(True)
-            return
-        mp = sync_areas.geodict2mp(content[0]['geometry'])
-        self.assetTrue(isinstance(mp, MultiPolygon))
+        geojson_file = open('lizard_area/testsources/peilgebieden_from_wfs.json')
+        content = json.loads(geojson_file.read())
+        geojson_file.close()
+
+        self.assertTrue(sync_areas.check_content(content))

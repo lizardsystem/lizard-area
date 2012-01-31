@@ -168,7 +168,6 @@ class Area(Communique, AL_Node):
     dt_latestsynchronized = models.DateField(blank=True, null=True)
     area_type = models.CharField(max_length=50, choices=AREA_TYPES,
                                  blank=True, null=True)
-    geometry_hash = models.CharField(max_length=100, null=True, blank=True)
     supports_object_permissions = True
     data_set = models.ForeignKey(DataSet,
                                  null=True,
@@ -231,3 +230,9 @@ class SynchronizationHistory(models.Model):
                                  null=True,
                                  blank=True)
     objects = FilteredGeoManager()
+
+    def __unicode__(self):
+        return "%s - %s" % (self.dt_start, self.data_set)
+
+    class Meta:
+        ordering = ['-dt_start']

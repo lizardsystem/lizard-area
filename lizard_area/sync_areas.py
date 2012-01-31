@@ -191,14 +191,11 @@ def update_area(area_object, properties, geometry,
         if isinstance(value_vss, date) and isinstance(value_krw, unicode):
             value_vss = unicode(value_vss)
         if value_vss != value_krw:
-            print "%s en %s" % (k, v)
-            print "Update %s with %s" % (getattr(area_object, v), value_krw)
             setattr(area_object, v, value_krw)
             updated = True
 
     mp = geometry2mp(geometry)
     if getattr(area_object, 'geometry') != mp:
-        print "Update MP"
         setattr(area_object, 'geometry', mp)
         updated = True
 
@@ -206,18 +203,15 @@ def update_area(area_object, properties, geometry,
     if getattr(area_object, 'geo_object_group') != group:
         setattr(area_object, 'geo_object_group', group)
         updated = True
-        print 'GEOOBJECTGROUP'
 
     if getattr(area_object, 'is_active') == False:
         setattr(area_object, 'is_active', True)
         updated = True
         activated = True
-        print 'IS_ACTIVE'
 
     if getattr(area_object, 'area_type') != area_type:
         setattr(area_object, 'area_type', area_type)
         updated = True
-        print 'AREA TYPE'
 
     return updated, activated
 
@@ -321,7 +315,7 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
 
         geometry_mp = geometry2mp(geometry)
         ident = get_ident(properties, area_type)
-        print ident
+        logger.debug("Synchronise %s ident=%s." % (area_type, ident))
         area_object, created = get_or_create_area(
             geo_object_group(username),
             geometry_mp,
@@ -332,7 +326,6 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
         updated, activated = update_area(area_object, properties,
                                          geometry, area_type, username)
         set_extra_values(area_object, created, updated)
-        print updated
         if created:
             amount_created = amount_created + 1
         elif updated:
@@ -343,7 +336,6 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
         if created or updated:
             try:
                 area_object.save()
-                print "Saved %s" % ident
                 if created:
                     kwargs = {'amount_created': amount_created}
                 elif updated:
@@ -351,7 +343,6 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
                 if kwargs is not None:
                     log_synchistory(sync_hist, **kwargs)
             except Exception as ex:
-                print "Error on save"
                 logger.error(".".join(map(str, ex.args)))
                 logger.error('Object ident="%s" is not saved' % ident)
 

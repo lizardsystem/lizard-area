@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['username'] is None:
-            logger.error('Option "--username" is required, use --help.')
+            logger.error('Option "--username" is required,"\ use --help.')
             return
 
         datasets = DataSet.objects.filter(name=options['dataset'])
@@ -46,8 +46,9 @@ class Command(BaseCommand):
             names_str = ""
             for dataset in datasets:
                 names_str = "%s\n%s" % (names_str, dataset.name)
-            logger.error('Option "--dataset" is reguired, use one of the next name:\n%s\n',
-                         names_str)
+            logger.error(
+                'Option "--dataset" is reguired, choices:\n%s\n',
+                names_str)
             return
 
         areatype_ok = False
@@ -55,9 +56,10 @@ class Command(BaseCommand):
             if options['areatype'] in item:
                 areatype_ok = True
         if areatype_ok == False:
-           logger.error('Option "--areatype" is reguired, use one of the next type:\n%s\n',
-                         "\n".join(['%s' % v[1] for v in AREA_TYPES]))
-           return
+            logger.error(
+                'Option "--areatype" is reguired, choices:\n%s\n',
+                "\n".join(['%s' % v[1] for v in AREA_TYPES]))
+            return
 
         run_sync(options['username'],
                  options['areatype'],
