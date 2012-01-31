@@ -17,7 +17,7 @@ class Command(BaseCommand):
     Synchronise area's with external WFS.
     """
 
-    help = ("Example: bin/django sync_areas --username=buildout "\
+    help = ("Example: bin/django sync_areas_wfs --username=buildout "\
                 "--areatype=peilgebied --dataset=HHNK")
 
     option_list = BaseCommand.option_list + (
