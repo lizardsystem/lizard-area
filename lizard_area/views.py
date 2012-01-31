@@ -17,4 +17,3 @@ class Homepage(AppView):
         return Category.objects.all()
 
     template_name = 'lizard_area/homepage.html'
-

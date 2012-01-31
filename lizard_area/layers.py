@@ -6,12 +6,10 @@ import mapnik
 from django.conf import settings
 from django.contrib.gis.geos import Point
 
-from lizard_map import adapter
 from lizard_map import coordinates
 from lizard_map import workspace
 from lizard_area.models import Area
 from lizard_area.models import Category
-
 
 
 class AdapterArea(workspace.WorkspaceItemAdapter):
@@ -105,21 +103,17 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
 
         category = Category.objects.get(slug=self.category_slug)
 
-        areas = Area.objects.filter(geo_object_group__category=category, geometry__contains=p)
-
+        areas = Area.objects.filter(geo_object_group__category=category,
+                                    geometry__contains=p)
 
         result = [{'distance': 0,
         'name': area.name,
         'shortname': area.name,
         'workspace_item': self.workspace_mixin_item,
         'identifier': {'ident': area.ident},
-        'google_coords': (x,y),
+        'google_coords': (x, y),
         'object': area} for area in areas]
 
         print result
 
         return result
-
-
-
-

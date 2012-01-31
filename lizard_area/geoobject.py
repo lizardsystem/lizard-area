@@ -15,7 +15,8 @@ from lizard_area.models import GeoObjectGroup
 logger = logging.getLogger(__name__)
 
 
-def import_shapefile_area(shapefile_filename, srid, user, data_administrator, file_type):
+def import_shapefile_area(shapefile_filename, srid, user,
+                          data_administrator, file_type):
     """
     Load shapefile with communique and put it in Communique(GeoObject)
     and GeoObjectGroup
@@ -63,7 +64,8 @@ def import_shapefile_area(shapefile_filename, srid, user, data_administrator, fi
         #     'geo_object_group': geo_object_group,
 
         #     # Communique
-        #     'name': '%s' % feature.GetField(feature.GetFieldIndex('OWANAAM')),
+        #     'name': '%s' % feature.GetField(
+        #         feature.GetFieldIndex('OWANAAM')),
 
         #     # Area
         #     'data_administrator': data_administrator,
@@ -125,4 +127,3 @@ def import_shapefile_area(shapefile_filename, srid, user, data_administrator, fi
 
     logger.info("Added %s with %s geo objects.",
             shapefile_filename, number_of_features)
-

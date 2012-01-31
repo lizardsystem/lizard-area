@@ -72,7 +72,7 @@ class CategoryResource(ModelResource):
         areas = Area.objects.filter(
             geo_object_group__in=groups).distinct()
         return [{'name': area.name,
-                 'url': area.get_absolute_url() }
+                 'url': area.get_absolute_url()}
                 for area in areas]
 
     def parent(self, instance):

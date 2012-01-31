@@ -12,6 +12,7 @@ from lizard_area.models import DataAdministrator
 from lizard_area.models import Communique
 from lizard_area.models import Area
 
+
 class GeoObjectInline(admin.TabularInline):
     model = GeoObject
 

@@ -2,8 +2,6 @@
 
 from django.test import TestCase
 
-from django.contrib.gis.geos import MultiPolygon
-
 import json
 
 from lizard_area.views import ApiView
@@ -47,7 +45,8 @@ class ApiTest(TestCase):
 
 class AreaSynchronizationTest(TestCase):
     def test_jsondict2mp(self):
-        geojson_file = open('lizard_area/testsources/peilgebieden_from_wfs.json')
+        geojson_file = open(
+            'lizard_area/testsources/peilgebieden_from_wfs.json')
         content = json.loads(geojson_file.read())
         geojson_file.close()
 

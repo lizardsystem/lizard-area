@@ -73,10 +73,10 @@ class KRWAreaView(View):
 
             result.append(rec)
 
-
         return {
             "areas": result
             }
+
 
 class CatchmentAreaView(View):
     """
@@ -120,7 +120,6 @@ class CatchmentAreaView(View):
 
             result.append(rec)
 
-
         return {
             "areas": result
             }
@@ -140,7 +139,7 @@ class AreaSpecial(View):
                 'name': area.name,
                 'id': area.ident,
                 'extent': area.extent(),
-                'parent':{},
+                'parent': {},
                 'children': [{
                     'id': child.ident,
                     'name': child.name
@@ -188,14 +187,12 @@ class AreaPropertyView(View):
         area = Area.objects.get(
                     ident=request.GET.get('object_id'))
 
-
         return [
             {'name': 'Naam', 'value': area.name},
             {'name': 'Ident', 'value': area.ident},
             {'name': 'Status', 'value': '-'},
             {'name': 'Waterbeheerder', 'value': 'Waternet'},
         ]
-
 
 
 class UserDataView(View):
