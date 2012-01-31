@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.5 (unreleased)
+0.1.5 (2012-01-31)
 ------------------
 
 - Added functionality to synchronize area objcten with remote wfs.
