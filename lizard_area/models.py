@@ -181,9 +181,14 @@ class Area(Communique, AL_Node):
         ordering = ('name', )
 
     def __unicode__(self):
-        return '%s (%s - %s)' % (
-            self.name, self.AREA_CLASS_DICT[self.area_class],
-            self.data_set.name)
+        try:
+            return '%s (%s - %s)' % (
+                self.name, self.AREA_CLASS_DICT[self.area_class],
+                self.data_set.name)
+        except:
+            return '%s (%s)' % (
+                self.name, self.AREA_CLASS_DICT[self.area_class])
+
 
     def get_absolute_url(self):
         return reverse('lizard_area_api_area', kwargs={'pk': self.pk})
