@@ -2,16 +2,23 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.4 (unreleased)
+0.1.5 (unreleased)
 ------------------
-
-- Added lizard-security to Area model.
 
 - Added functionality to synchronize area objcten with remote wfs.
 
 - Created management command and celery task to run sinchrnization as
   periodic task.
 
+
+0.1.4 (2012-01-30)
+------------------
+
+- Added lizard-security to Area model.
+
+- Fixes tests.
+
+- Switches to postgis for testing.
 
 
 0.1.3 (2011-12-09)

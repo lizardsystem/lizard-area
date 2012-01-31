@@ -10,7 +10,6 @@ from django.contrib.gis.geos import GEOSGeometry
 from osgeo import ogr
 
 from lizard_area.models import Area
-from lizard_area.models import AreaCode
 from lizard_area.models import GeoObjectGroup
 
 logger = logging.getLogger(__name__)
