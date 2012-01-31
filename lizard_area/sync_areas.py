@@ -5,7 +5,10 @@ Adapter for areas
 import httplib
 import logging
 import json
-import datetime
+from decimal import Decimal
+
+from datetime import datetime
+from datetime import date
 
 from django.contrib.gis.geos import MultiPolygon
 from django.contrib.gis.geos import Polygon
@@ -22,13 +25,24 @@ logger = logging.getLogger(__name__)
 
 
 def log_synchistory(sync_hist, **kwargs):
-    """Save synchronistaion history."""
+    """Save synchronistaion history.
+
+    Arguments:
+
+    sync_hist -- instance of SynchronizationHistory
+    kwargs - dict contains a field name end value
+    """
     for k, v in kwargs.items():
         setattr(sync_hist, k, v)
     sync_hist.save()
 
 
 def geo_object_group(username):
+    """Return an instance of GeoObjectGroup.
+
+    Argument:
+
+    username -- user logging name as string"""
     user_obj = User.objects.get(username=username)
     group_name = 'LAYERS'
     group_slug = slugify(group_name)
@@ -49,16 +63,16 @@ def fields_mapping(area_type):
     """
     if area_type.lower() == 'peilgebied':
         return {'gpgident': 'ident',
-                'gpgname': 'name',
-                'iws_dtmwijzmeta': 'dt_latestchanged',
+                'gpgnaam': 'name',
+                'iws_dtmwijzmeta': 'dt_latestchanged_krw',
                 'gpgoppvl': 'surface',
                 'gpgsoort': 'areasort',
                 'gpgsoort': 'areasort_krw',
-                'krwwatertype': 'watertype_krw' }
+                'krwwatertype': 'watertype_krw'}
     elif area_type.lower() == 'aanafvoergebied':
         return {'gafident': 'ident',
-                'gafname': 'name',
-                'iws_dtmwijzmeta': 'dt_latestchanged',
+                'gafnaam': 'name',
+                'iws_dtmwijzmeta': 'dt_latestchanged_krw',
                 'gafoppvl': 'surface',
                 'gafsoort': 'areasort',
                 'gafsoort': 'areasort_krw',
@@ -95,7 +109,13 @@ def geometry2mp(geo_dict):
 
 
 def check_content(content):
-    """Checks or content is GeoJSON."""
+    """Checks or content contains a GeoJSON elements.
+
+    Arguments:
+
+    content -- dict contains data from wfs
+    """
+
     expected_keys = [u'crs', u'type', u'features', u'bbox']
     features_key = u'features'
     if isinstance(content, dict) == False:
@@ -126,6 +146,14 @@ def check_content(content):
 
 
 def get_ident(properties, area_type):
+    """Returns ident of passed area object.
+    The ident field has different names depends on area_type.
+
+    Arguments
+
+    properties -- dict contains area data recived from wfs
+    area_type -- area type as string for example 'peilgebied'
+    """
     if area_type == 'aanafvoergebied':
         return properties['gafident']
     if area_type == 'peilgebied':
@@ -133,49 +161,76 @@ def get_ident(properties, area_type):
     return None
 
 
-def update_area(area_object, properties, geometry, data_set, area_type, username):
-    """ """
+def update_area(area_object, properties, geometry,
+                area_type, username):
+    """Updates a passed area object. Returns
+    amount of activated and updated objects.
+
+    Arguments:
+
+    area_object -- instance object to update
+    properties -- dict contains area data
+    geometry -- dict contains geometry data
+    data_set -- instance object of lizard_security.DataSet
+    area_type -- area type as string for example 'peilgebied'
+    username -- user logging name as string
+    """
     updated = False
+    activated = False
     mapping = fields_mapping(area_type)
     for k, v in mapping.items():
         if k not in properties.keys():
             logger.warning("Wrong fields mapping '%s' NOT in response." % k)
             continue
-        value = properties.get(k)
-        print ("value to set %s." % value)
-        print ("value available %s." % getattr(area_object, v))
-        if getattr(area_object, v) != value:
-            print "set %s." % v
-            setattr(area_object, v, value)
+        value_krw = properties.get(k)
+        value_vss = getattr(area_object, v)
+        if isinstance(value_vss, unicode) and isinstance(value_krw, int):
+            value_krw = unicode(value_krw)
+        if isinstance(value_vss, unicode) and isinstance(value_krw, Decimal):
+            value_krw = unicode(value_krw)
+        if isinstance(value_vss, date) and isinstance(value_krw, unicode):
+            value_vss = unicode(value_vss)
+        if value_vss != value_krw:
+            print "%s en %s" % (k, v)
+            print "Update %s with %s" % (getattr(area_object, v), value_krw)
+            setattr(area_object, v, value_krw)
             updated = True
 
     mp = geometry2mp(geometry)
     if getattr(area_object, 'geometry') != mp:
-        setattr(area_object, 'data_set', data_set)
-        updated = True
-
-    if getattr(area_object, 'data_set') != data_set:
-        setattr(area_object, 'data_set', data_set)
+        print "Update MP"
+        setattr(area_object, 'geometry', mp)
         updated = True
 
     group = geo_object_group(username)
     if getattr(area_object, 'geo_object_group') != group:
         setattr(area_object, 'geo_object_group', group)
         updated = True
+        print 'GEOOBJECTGROUP'
 
     if getattr(area_object, 'is_active') == False:
         setattr(area_object, 'is_active', True)
         updated = True
+        activated = True
+        print 'IS_ACTIVE'
 
     if getattr(area_object, 'area_type') != area_type:
         setattr(area_object, 'area_type', area_type)
         updated = True
+        print 'AREA TYPE'
 
-    return updated
+    return updated, activated
 
 
 def set_extra_values(area_object, created, updated):
-    """Sets extra values into passed area_object."""
+    """Sets extra values into passed area_object.
+
+    Arguments:
+
+    area_object -- instance object of lizard_area.Area
+    created - boolean indicates a new object
+    updated - boolean indicates a existing object
+    """
     now = datetime.today()
     setattr(area_object, 'dt_latestsynchronized', now)
     if created:
@@ -185,82 +240,182 @@ def set_extra_values(area_object, created, updated):
 
 
 def invalidate(content, area_type, data_set):
-    """Deactivate areas."""
+    """Deactivate areas those available in vss
+    but not in content.
+    Returns amount of deactivated areas.
+
+    Arguments:
+
+    content -- list of dict contains loaded krw data
+    area_type -- area type as string for example 'peilgebied'
+    data_set -- instance object of lizard_security.DataSet
+    """
     vss_areas = Area.objects.filter(area_type=area_type,
-                                    data_set=data_set)
-    for feature in content['features']:
-        properties = feature['properties']
+                                    data_set=data_set,
+                                    is_active=True)
+    amount_deactivated = 0
+    if vss_areas.exists() == False:
+        return amount_deactivated
+
+    for area in vss_areas:
+        is_active = False
+        for feature in content:
+            properties = feature['properties']
+            ident_krw = get_ident(properties, area_type)
+            if area.ident == ident_krw:
+                is_active = True
+                break
+
+        if is_active == False:
+            area.is_active = is_active
+            area.save()
+            amount_deactivated = amount_deactivated + 1
+    return amount_deactivated
+
+
+def get_or_create_area(geo_object_group, geometry, ident, data_set):
+    """Returns area object. This function to catch MultipleObjectsReturned
+    error. The error can raise because Ident is not unique field in db.
+    In case of error the function returns None."""
+    created = False
+    area_object = None
+    try:
+        area_object = Area.objects.get(ident=ident, data_set=data_set)
+        return area_object, created
+    except Area.DoesNotExist as ex:
+        area_object = Area(ident=ident,
+                           geo_object_group=geo_object_group,
+                           geometry=geometry,
+                           data_set=data_set)
+        created = True
+        return area_object, created
+    except Area.MultipleObjectsReturned as ex:
+        logger.error(".".join(map(str, ex.args)))
+    except Exception as ex:
+        logger.error(".".join(map(str, ex.args)))
+    return area_object, created
 
 
 def create_update_areas(content, username, area_type, data_set, sync_hist):
-    """ """
+    """Creates or updates areas.
+    During the execution logs into SynchronizationHistory.
+
+    Arguments:
+
+    content -- dict of geojson format within loaded krw data
+    username -- user logging name as string
+    area_type -- area type as string for example 'peilgebied'
+    data_set -- instance object of lizard_security.DataSet
+    sync_hist -- object instance of lizard_area.SynchronizationHistory
+
+    """
     amount_updated = 0
     amount_created = 0
+    amount_activated = 0
+    amount_synchronized = 0
+    amount_deactivated = 0
+
     for feature in content['features']:
         properties = feature['properties']
         geometry = feature['geometry']
 
+        geometry_mp = geometry2mp(geometry)
         ident = get_ident(properties, area_type)
-        area_object, created = Area.objects.get_or_create(
-            geo_object_group=geo_object_group(username),
-            geometry=geometry2mp(geometry),
-            ident=ident)
-        updated = update_area(area_object, properties,
-                              geometry, data_set,
-                              area_type, username)
+        print ident
+        area_object, created = get_or_create_area(
+            geo_object_group(username),
+            geometry_mp,
+            ident,
+            data_set)
+        if area_object is None:
+            continue
+        updated, activated = update_area(area_object, properties,
+                                         geometry, area_type, username)
         set_extra_values(area_object, created, updated)
+        print updated
+        if created:
+            amount_created = amount_created + 1
+        elif updated:
+            amount_updated = amount_updated + 1
 
-        amount_updated = amount_updated + 1 if updated
+        if activated:
+            amount_activated = amount_activated + 1
         if created or updated:
             try:
                 area_object.save()
+                print "Saved %s" % ident
                 if created:
-                    amount_created = amount_created + 1
                     kwargs = {'amount_created': amount_created}
-                else if updated:
-                    amount_updated = amount_apdated + 1
+                elif updated:
                     kwargs = {'amount_updated': amount_updated}
-                log_synchistory(sync_hist,**{'message': message})
-            except Error as ex:
+                if kwargs is not None:
+                    log_synchistory(sync_hist, **kwargs)
+            except Exception as ex:
+                print "Error on save"
+                logger.error(".".join(map(str, ex.args)))
                 logger.error('Object ident="%s" is not saved' % ident)
+
+    amount_deactivated = invalidate(content['features'], area_type, data_set)
+    amount_synchronized = len(content['features'])
+    log_synchistory(sync_hist, **{'amount_created': amount_created,
+                                  'amount_updated': amount_updated,
+                                  'amount_activated': amount_activated,
+                                  'amount_synchronized': amount_synchronized,
+                                  'amount_deactivated': amount_deactivated})
 
 
 def sync_areas(username, params_str, area_type, data_set, sync_hist):
+    """Create a http request, loads the data as json,
+    checks or recived data geojson elements, synchronizes the data.
+    During the execution logs into SynchronizationHistory.
+
+    Arguments:
+
+    username -- user logging name as string
+    params_str -- request parameter as url string
+    area_type -- area type as string for example 'peilgebied'
+    data_set -- instance object of lizard_security.DataSet
+    sync_hist -- object instance of lizard_area.SynchronizationHistory
+    """
     host = "maps.waterschapservices.nl"
     url = "/wsh/ows?%s" % params_str
-    print("import data from host='%s' \n url='%s'" % (host, url))
-    kwargs = {"url": url, "host": host, "message": "Connecting..")
-    log_synchistory(sync_hist,**kwargs)
+    kwargs = {"url": url, "host": host, "message": "Connecting.."}
+    log_synchistory(sync_hist, **kwargs)
     connection = httplib.HTTPConnection(host)
     connection.request("GET", url)
     response = connection.getresponse()
-    print "Response is %s", response.status
+    success = False
     if response.status == 200:
         message = "Connected, starting load data."
-        log_synchistory(sync_hist,**{'message': message})
+        log_synchistory(sync_hist, **{'message': message})
         content = json.loads(response.read())
         if check_content(content):
             message = "Data loaded, synchronization in progress."
-            log_synchistory(sync_hist,**{'message': message})
+            log_synchistory(sync_hist, **{'message': message})
             logger.debug(message)
-            create_update_areas(content, username, area_type, data_set, sync_hist)
+            create_update_areas(content, username,
+                                area_type, data_set, sync_hist)
+            success = True
         else:
             message = "Content is not a GeoJSON format or empty."
-            log_synchistory(sync_hist,**{'message': message})
+            log_synchistory(sync_hist, **{'message': message})
             logger.error(message)
     elif response.status == 404:
         message = "Page Not Found host='%s' url='%s'" % (host, url)
-        log_synchistory(sync_hist,**{'message': message})
+        log_synchistory(sync_hist, **{'message': message})
         logger.error(message)
     else:
-        message = "Connection error status='%s' reason='%s'" % (response.status,
-                                                                response.reason)
-        log_synchistory(sync_hist,**{'message': message})
+        message = "Connection error status='%s' reason='%s'" % (
+            response.status, response.reason)
+        log_synchistory(sync_hist, **{'message': message})
         logger.error(message)
     connection.close()
+    return success
 
 
 def default_request_parameters():
+    """Containts request parameters. Expected that this parameter
+    will not be changed."""
     parameters = {
         'service': 'WFS',
         'version': '1.0.0',
@@ -271,14 +426,26 @@ def default_request_parameters():
 
 
 def run_sync(username, area_type, data_set):
+    """Retrieves the request configuration,
+    creates a request string and starts syncronization.
+    During the execution logs into SynchronizationHistory.
+
+    Arguments:
+
+    username -- user logging name as string
+    area_type -- area type as string for example 'peilgebied'
+    data_set -- instance object of lizard_security.DataSet
+    """
     configurations = AreaWFSConfiguration.objects.filter(area_type=area_type,
                                                          data_set=data_set)
 
     message = "Syncronization is started. Retrieving configuration...."
+    success = True
     sync_hist = SynchronizationHistory(
         dt_start=datetime.today(),
         username=username,
-        message=message)
+        message=message,
+        data_set=data_set)
     sync_hist.save()
     if configurations.exists():
         for config in configurations:
@@ -287,12 +454,19 @@ def run_sync(username, area_type, data_set):
                 'cql_filter': config.cql_filter,
                 'maxFeatures': config.maxFeatures}
             request_parameters.update(default_request_parameters())
-            params_str = '&'.join(['%s=%s' % (k, v) for k, v in request_parameters.items()])
-            print params_str
-            print type(params_str)
-            sync_areas(username, str(params_str), area_type, data_set, sync_hist)
+            params_str = '&'.join(
+                ['%s=%s' % (k, v) for k, v in request_parameters.items()])
+            success = sync_areas(username, str(params_str), area_type,
+                                 data_set, sync_hist)
     else:
         message = "There are no any configuration for %s of %s" % (
+            area_type, data_set.name)
         log_synchistory(sync_hist, **{'message': message})
         logger.info(message)
-    log_synchistory(sync_hist, **{'dt_finish': datetime.today()})
+    if success:
+        message = "Synchronization is finished."
+    else:
+        message = "Synchronization is finished with erors: %s" % (
+            sync_hist.message)
+    log_synchistory(sync_hist, **{'dt_finish': datetime.today(),
+                                  'message': message})

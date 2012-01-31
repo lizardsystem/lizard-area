@@ -1,5 +1,6 @@
 # (c) Nelen & Schuurmans.  GPL licensed, see LICENSE.txt.
 import logging
+from datetime import datetime
 from treebeard.al_tree import AL_Node
 
 from django.contrib.gis.db import models
@@ -117,7 +118,7 @@ class Communique(GeoObject):
     """
 
     # i.e. Reeuwijkse plassen
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, null=True, blank=True)
 
     # i.e. "NL13_11"
     code = models.CharField(max_length=128, null=True, blank=True)
@@ -125,12 +126,12 @@ class Communique(GeoObject):
     #
     description = models.TextField(default="")
     watertype_krw = models.CharField(max_length=200, null=True, blank=True)
-    dt_latestchanged_krw = models.DateTimeField(help_text='Time changed by GV',
+    dt_latestchanged_krw = models.DateField(help_text='Time changed by GV',
                                             null=True, blank=True)
-    surfase = models.DecimalField(max_digits=10, decimal_places=1,
+    surface = models.DecimalField(max_digits=10, decimal_places=1,
                                   null=True, blank=True)
     areasort = models.CharField(max_length=100, null=True, blank=True)
-    areasoort_krw = models.CharField(max_length=100, null=True, blank=True)
+    areasort_krw = models.CharField(max_length=100, null=True, blank=True)
 
     def __unicode__(self):
         return '%s - %s' % (self.ident, self.name)
@@ -162,10 +163,12 @@ class Area(Communique, AL_Node):
     area_class = models.IntegerField(
         choices=AREA_CLASS_CHOICES, default=AREA_CLASS_KRW_WATERLICHAAM)
     is_active = models.BooleanField()
-    dt_created = models.DateTimeField()
-    dt_latestchanged = models.DateTimeField()
-    dt_latestsynchronized = models.DateTimeField()
-    area_type = models.CharField(max_length=50, choices=AREA_TYPES)
+    dt_created = models.DateField(default=datetime.today())
+    dt_latestchanged = models.DateField(blank=True, null=True)
+    dt_latestsynchronized = models.DateField(blank=True, null=True)
+    area_type = models.CharField(max_length=50, choices=AREA_TYPES,
+                                 blank=True, null=True)
+    geometry_hash = models.CharField(max_length=100, null=True, blank=True)
     supports_object_permissions = True
     data_set = models.ForeignKey(DataSet,
                                  null=True,
@@ -213,7 +216,7 @@ class SynchronizationHistory(models.Model):
                                          blank=True)
     amount_created = models.IntegerField(null=True,
                                          blank=True)
-    amount_syncronized = models.IntegerField(null=True,
+    amount_synchronized = models.IntegerField(null=True,
                                              blank=True)
     amount_deactivated = models.IntegerField(null=True,
                                              blank=True)

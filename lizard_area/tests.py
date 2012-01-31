@@ -47,7 +47,7 @@ class ApiTest(TestCase):
 
 class AreaSynchronizationTest(TestCase):
     def test_jsondict2mp(self):
-        geojson_file = open('testsources/areas_from_wfs.json')
+        geojson_file = open('testsources/peilgebiedn_from_wfs.json')
         content = json.loads(geojson_file)
         if sync_areas.check_content(content) == False:
             self.assertFalse(True)
