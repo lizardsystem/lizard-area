@@ -280,7 +280,8 @@ def get_or_create_area(geo_object_group, geometry, ident, data_set):
         area_object = Area(ident=ident,
                            geo_object_group=geo_object_group,
                            geometry=geometry,
-                           data_set=data_set)
+                           data_set=data_set,
+                           area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED)
         created = True
         return area_object, created
     except Area.MultipleObjectsReturned as ex:
@@ -355,6 +356,19 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
                                   'amount_deactivated': amount_deactivated})
 
 
+def get_content(response):
+    """Return decoded JSON object or string.
+
+    Argument:
+    response -- responce object of HTTP request
+    """
+    try:
+      content = json.loads(response.read())
+      return content, True
+    except ValueError as ex:
+        return response.read(), False
+
+
 def sync_areas(username, params_str, area_type, data_set, sync_hist):
     """Create a http request, loads the data as json,
     checks or recived data geojson elements, synchronizes the data.
@@ -379,8 +393,8 @@ def sync_areas(username, params_str, area_type, data_set, sync_hist):
     if response.status == 200:
         message = "Connected, starting load data."
         log_synchistory(sync_hist, **{'message': message})
-        content = json.loads(response.read())
-        if check_content(content):
+        content, is_json = get_content(response)
+        if is_json and check_content(content):
             message = "Data loaded, synchronization in progress."
             log_synchistory(sync_hist, **{'message': message})
             logger.debug(message)
@@ -389,6 +403,7 @@ def sync_areas(username, params_str, area_type, data_set, sync_hist):
             success = True
         else:
             message = "Content is not a GeoJSON format or empty."
+            print message
             log_synchistory(sync_hist, **{'message': message})
             logger.error(message)
     elif response.status == 404:
