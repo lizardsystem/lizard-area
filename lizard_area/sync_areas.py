@@ -363,9 +363,9 @@ def get_content(response):
     response -- responce object of HTTP request
     """
     try:
-      content = json.loads(response.read())
-      return content, True
-    except ValueError as ex:
+        content = json.loads(response.read())
+        return content, True
+    except ValueError:
         return response.read(), False
 
 
@@ -403,7 +403,6 @@ def sync_areas(username, params_str, area_type, data_set, sync_hist):
             success = True
         else:
             message = "Content is not a GeoJSON format or empty."
-            print message
             log_synchistory(sync_hist, **{'message': message})
             logger.error(message)
     elif response.status == 404:
