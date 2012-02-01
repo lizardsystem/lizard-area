@@ -125,6 +125,8 @@ class Communique(GeoObject):
 
     #
     description = models.TextField(default="")
+    edited_by = models.TextField(max_length=150, null=True, blank=True)
+    edited_at = models.DateField(null=True, blank=True)
     watertype_krw = models.CharField(max_length=200, null=True, blank=True)
     dt_latestchanged_krw = models.DateField(help_text='Time changed by GV',
                                             null=True, blank=True)
@@ -132,6 +134,7 @@ class Communique(GeoObject):
                                   null=True, blank=True)
     areasort = models.CharField(max_length=100, null=True, blank=True)
     areasort_krw = models.CharField(max_length=100, null=True, blank=True)
+
 
     def __unicode__(self):
         return '%s - %s' % (self.ident, self.name)
