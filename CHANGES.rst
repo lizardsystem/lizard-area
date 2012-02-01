@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.1.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added functionality to retrieve waterbody/area data (scenario 550).
 
 
 0.1.5 (2012-01-31)

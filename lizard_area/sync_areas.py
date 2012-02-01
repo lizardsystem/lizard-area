@@ -316,6 +316,8 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
 
         geometry_mp = geometry2mp(geometry)
         ident = get_ident(properties, area_type)
+        if ident == '2-3':
+            print properties
         logger.debug("Synchronise %s ident=%s." % (area_type, ident))
         area_object, created = get_or_create_area(
             geo_object_group(username),

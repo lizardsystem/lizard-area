@@ -186,13 +186,43 @@ class AreaPropertyView(View):
 
         area = Area.objects.get(
                     ident=request.GET.get('object_id'))
-
-        return [
+        waterbeheerder = ''
+        if area.data_set is not None:
+            waterbeheerder = area.data_set.name
+        data = [
             {'name': 'Naam', 'value': area.name},
-            {'name': 'Ident', 'value': area.ident},
-            {'name': 'Status', 'value': '-'},
-            {'name': 'Waterbeheerder', 'value': 'Waternet'},
+            {'name': 'Code', 'value': area.ident},
+            {'name': 'Waterbeheerder', 'value': waterbeheerder},
         ]
+        if area.area_class == Area.AREA_CLASS_AAN_AFVOERGEBIED:
+            data.extend(self.get_area_data(area))
+        elif area.area_class == Area.AREA_CLASS_KRW_WATERLICHAAM:
+            data.extend(self.get_waterbody_data(area))
+
+        return data
+
+    def get_area_data(self, area):
+        """Return area prperties as list of dict."""
+        return [
+            {'name': 'Datum laatste wijziging',
+             'value': area.dt_latestchanged_krw},
+            {'name': 'Oppervlakte', 'value': area.surface},
+            {'name': 'Soort gebied', 'value': area.areasort},
+            {'name': 'Soort deelstroomgebied', 'value': area.areasort_krw},
+            {'name': 'Watertype', 'value': area.watertype_krw}]
+
+    def get_waterbody_data(self, area):
+        """Return waterbody properties as list of dict."""
+        data = []
+        if area.waterbody_set.all().exists() == False:
+            return data
+        waterbody = area.waterbody_set.all()[0]
+        if waterbody.krw_status is not None:
+            data.append({'name': 'Status', 'value': waterbody.krw_status.code})
+        if waterbody.krw_watertype is not None:
+            data.append({'name': 'Watertype',
+                         'value': waterbody.krw_watertype.code})
+        return data
 
 
 class UserDataView(View):
