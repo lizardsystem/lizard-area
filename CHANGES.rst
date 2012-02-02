@@ -12,6 +12,8 @@ bin/buildoutChangelog of lizard-area
 
 - Added functonality to view area/woterbody information.
 
+- Added functionality to create a tree of 'aanafvoergebieden'.
+
 
 0.1.5 (2012-01-31)
 ------------------
