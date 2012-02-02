@@ -135,7 +135,6 @@ class Communique(GeoObject):
     areasort = models.CharField(max_length=100, null=True, blank=True)
     areasort_krw = models.CharField(max_length=100, null=True, blank=True)
 
-
     def __unicode__(self):
         return '%s - %s' % (self.ident, self.name)
 
@@ -191,7 +190,6 @@ class Area(Communique, AL_Node):
         except:
             return '%s (%s)' % (
                 self.name, self.AREA_CLASS_DICT[self.area_class])
-
 
     def get_absolute_url(self):
         return reverse('lizard_area_api_area', kwargs={'pk': self.pk})
