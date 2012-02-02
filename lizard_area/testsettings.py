@@ -83,6 +83,20 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
+# Absolute path to the directory that holds user-uploaded media.
+MEDIA_ROOT = os.path.join(BUILDOUT_DIR, 'var', 'media')
+# Absolute path to the directory where django-staticfiles'
+# "bin/django build_static" places all collected static files from all
+# applications' /media directory.
+STATIC_ROOT = os.path.join(BUILDOUT_DIR, 'var', 'static')
+
+# URL that handles the media served from MEDIA_ROOT. Make sure to use a
+# trailing slash if there is a path component (optional in other cases).
+MEDIA_URL = '/media/'
+# URL for the per-application /media static files collected by
+# django-staticfiles.  Use it in templates like
+# "{{ MEDIA_URL }}mypackage/my.css".
+STATIC_URL = '/static_media/'
 # Used for django-staticfiles
 STATIC_URL = '/static_media/'
 STATIC_ROOT = os.path.join(BUILDOUT_DIR, 'var', 'static')
