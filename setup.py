@@ -20,6 +20,7 @@ install_requires = [
     'lizard-geo',
     'lizard-security',
     'pkginfo',
+    'django-celery',
     ],
 
 tests_require = [
