@@ -7,6 +7,11 @@ bin/buildoutChangelog of lizard-area
 
 - Added functionality to retrieve waterbody/area data (scenario 550).
 
+- Added functionality to keep last changes on communique.description
+  (#4).
+
+- Added functonality to view area/woterbody information.
+
 
 0.1.5 (2012-01-31)
 ------------------

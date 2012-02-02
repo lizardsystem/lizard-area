@@ -1,7 +1,9 @@
 """
 API views not coupled to models.
 """
+from datetime import datetime
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 from djangorestframework.views import View
 
@@ -164,18 +166,34 @@ class AreaCommuniqueView(View):
 
         area = Area.objects.get(
                     ident=request.GET.get('object_id'))
-
-        return {'data': area.communique.description}
+        return  self.get_data(area)
 
     def post(self, request, ident=None):
 
         area = Area.objects.get(
             ident=self.CONTENT.get('object_id', None))
+        username = User.objects.get(username=request.user).get_full_name()
+        now = datetime.today()
 
+        area.communique.edited_by = username
+        area.communique.edited_at = now
         area.communique.description = self.CONTENT.get('communique', '')
         area.communique.save()
 
-        return {'success': True, 'data': area.communique.description}
+        return {'success': True, 'data': self.get_data(area)}
+
+    def get_data(self, area):
+        return [
+            {'id': 'edited_by',
+             'name': 'Gewijzigd door',
+             'value': area.communique.edited_by},
+            {'id': 'edited_at',
+             'name': 'Gewijzigd op',
+             'value': area.communique.edited_at},
+            {'id': 'description',
+             'name': 'Beschrijving',
+             'value': area.communique.description},
+        ]
 
 
 class AreaPropertyView(View):
