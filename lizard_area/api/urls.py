@@ -12,11 +12,12 @@ from lizard_area.api.resources import CommuniqueResource
 
 from lizard_area.api.views import RootView
 from lizard_area.api.views import CategoryRootView
-from lizard_area.api.views import KRWAreaView
-from lizard_area.api.views import CatchmentAreaView
 from lizard_area.api.views import AreaSpecial
+from lizard_area.api.views import AreaViewForTree
 from lizard_area.api.views import AreaCommuniqueView
 from lizard_area.api.views import AreaPropertyView
+
+from lizard_area.models import Area
 
 admin.autodiscover()
 
@@ -34,10 +35,12 @@ urlpatterns = patterns(
         InstanceModelView.as_view(resource=CategoryResource),
         name=NAME_PREFIX + 'category'),
     url(r'^krw-areas/$',
-        KRWAreaView.as_view(),
+        AreaViewForTree.as_view(),
+         {'area_class': Area.AREA_CLASS_KRW_WATERLICHAAM},
         name=NAME_PREFIX + 'krw_areas'),
     url(r'^catchment-areas/$',  # Aan-/afvoergebieden
-        CatchmentAreaView.as_view(),
+        AreaViewForTree.as_view(),
+        {'area_class': Area.AREA_CLASS_AAN_AFVOERGEBIED},
         name=NAME_PREFIX + 'catchment_areas'),
     url(r'^communique/(?P<pk>[^/]+)/$',
         InstanceModelView.as_view(resource=CommuniqueResource),

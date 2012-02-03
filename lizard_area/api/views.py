@@ -38,71 +38,26 @@ class CategoryRootView(View):
                 for category in Category.objects.filter(parent=None)]}
 
 
-class KRWAreaView(View):
+class AreaViewForTree(View):
     """
-    Show KRW areas.
+    Show areas in a way that is usefull for a dynamic loading extjs tree .
     """
-    def get(self, request):
-        node = request.GET.get('node', 'root')
-
-        if node == 'root':
-            areas = Area.objects.filter(
-                    area_class=Area.AREA_CLASS_KRW_WATERLICHAAM)
-        else:
-            areas = Area.objects.filter(
-                    parent__ident=node)
-
-        query = request.GET.get('query', None)
-        id = request.GET.get('id', None)
-        if id == 'id':
-            use_id = True
-        else:
-            use_id = False
-
-        if query:
-            areas = areas.filter(name__istartswith=query)[0:25]
-
-        result = []
-        for area in areas:
-            rec = {'name': area.name,
-                 'id': area.ident,
-                 'leaf': True,
-                 'parent': area.parent_id,
-                 'url': area.get_absolute_url()
-            }
-            if use_id:
-                rec['id'] = area.id
-
-            result.append(rec)
-
-        return {
-            "areas": result
-            }
-
-
-class CatchmentAreaView(View):
-    """
-    Show catchment areas.
-    """
-    def get(self, request):
+    def get(self, request, area_class=None):
 
         node = request.GET.get('node', 'root')
 
         if node == 'root':
             areas = Area.objects.filter(
-                    area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED,
                     parent__isnull=True)
 
         else:
             areas = Area.objects.filter(
                     parent__id=node)
 
+        if area_class is not None:
+            areas = areas.filter(area_class=area_class)
+
         query = request.GET.get('query', None)
-        id = request.GET.get('id', None)
-        if id == 'id':
-            use_id = True
-        else:
-            use_id = False
 
         if query:
             areas = areas.filter(name__istartswith=query)[0:25]
@@ -114,10 +69,7 @@ class CatchmentAreaView(View):
                  'ident': area.ident,
                  'leaf': area.is_leaf(),
                  'parent': area.parent_id,
-                 #'url': area.get_absolute_url()
             }
-            if use_id:
-                rec['id'] = area.id
 
             result.append(rec)
 
