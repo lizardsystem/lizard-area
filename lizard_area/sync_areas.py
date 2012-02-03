@@ -151,7 +151,7 @@ def get_ident(properties, area_type):
 
     Arguments
 
-    properties -- dict contains area data recived from wfs
+    properties -- dict contains area data from wfs
     area_type -- area type as string for example 'peilgebied'
     """
     if area_type == 'aanafvoergebied':
@@ -159,6 +159,25 @@ def get_ident(properties, area_type):
     if area_type == 'peilgebied':
         return properties['gpgident']
     return None
+
+
+def get_parent_area(properties):
+    """Return parent object of passed area object."""
+
+    gafident_parent = properties.get('onderdeelvangafident', None)
+    gpgident_parent = properties.get('onderdeelvangpgident', None)
+
+    parent_areas1 = Area.objects.filter(ident=gafident_parent)
+    parent_areas2 = Area.objects.filter(ident=gpgident_parent)
+
+    if parent_areas1.exists():
+        return parent_areas1[0]
+    elif parent_areas2.exists():
+        return parent_areas2[0]
+    else:
+        logger.debug('Parent area gafident=%s and gpgident=%s '\
+                     'does not exist.' % (gafident_parent, gpgident_parent))
+        return None
 
 
 def update_area(area_object, properties, geometry,
@@ -204,13 +223,20 @@ def update_area(area_object, properties, geometry,
         setattr(area_object, 'geo_object_group', group)
         updated = True
 
-    if getattr(area_object, 'is_active') == False:
-        setattr(area_object, 'is_active', True)
-        updated = True
-        activated = True
+    detailniveau = properties.get('detailniveau', None)
+    if detailniveau is not None or detailniveau != '':
+        if getattr(area_object, 'is_active') == False:
+            setattr(area_object, 'is_active', True)
+            updated = True
+            activated = True
 
     if getattr(area_object, 'area_type') != area_type:
         setattr(area_object, 'area_type', area_type)
+        updated = True
+
+    parent_area = get_parent_area(properties)
+    if getattr(area_object, 'parent') != parent_area:
+        setattr(area_object, 'parent', parent_area)
         updated = True
 
     return updated, activated
@@ -233,14 +259,34 @@ def set_extra_values(area_object, created, updated):
         setattr(area_object, 'dt_latestchanged', now)
 
 
+def set_parent_relation(features, area_type):
+    """Create a child-parent relation.
+
+    Arguments:
+
+    features -- list of dict contains krw areas from wfs
+    area_type -- area type as string for example 'peilgebied'
+    """
+    for feature in features:
+        ident = get_ident(feature['properties'], area_type)
+        areas = Area.objects.filter(ident=ident)
+        if areas.exists():
+            area = areas[0]
+            area.parent = get_parent_area(feature['properties'])
+            area.save()
+        else:
+            logger.error('Area with krw_ident=%s does not exist.' % ident)
+
+
 def invalidate(content, area_type, data_set):
     """Deactivate areas those available in vss
-    but not in content.
+    but not in content. Deactivates areas where
+    'detailniveau' is empty.
     Returns amount of deactivated areas.
 
     Arguments:
 
-    content -- list of dict contains loaded krw data
+    content -- list of dict contains krw areas from wfs
     area_type -- area type as string for example 'peilgebied'
     data_set -- instance object of lizard_security.DataSet
     """
@@ -256,7 +302,8 @@ def invalidate(content, area_type, data_set):
         for feature in content:
             properties = feature['properties']
             ident_krw = get_ident(properties, area_type)
-            if area.ident == ident_krw:
+            detailniveau = properties.get('detailniveau', None)
+            if area.ident == ident_krw and detailniveau is not None:
                 is_active = True
                 break
 
@@ -316,8 +363,6 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
 
         geometry_mp = geometry2mp(geometry)
         ident = get_ident(properties, area_type)
-        if ident == '2-3':
-            print properties
         logger.debug("Synchronise %s ident=%s." % (area_type, ident))
         area_object, created = get_or_create_area(
             geo_object_group(username),
@@ -349,6 +394,7 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
                 logger.error(".".join(map(str, ex.args)))
                 logger.error('Object ident="%s" is not saved' % ident)
 
+    set_parent_relation(content['features'], area_type)
     amount_deactivated = invalidate(content['features'], area_type, data_set)
     amount_synchronized = len(content['features'])
     log_synchistory(sync_hist, **{'amount_created': amount_created,
