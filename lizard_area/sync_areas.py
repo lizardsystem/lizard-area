@@ -239,6 +239,11 @@ def update_area(area_object, properties, geometry,
         setattr(area_object, 'parent', parent_area)
         updated = True
 
+    area_class = Area.AREA_CLASS_AAN_AFVOERGEBIED
+    if getattr(area_object, 'area_class') != area_class:
+        setattr(area_object, 'area_class', area_class)
+        updated = True
+
     return updated, activated
 
 
