@@ -113,7 +113,7 @@ class CatchmentAreaView(View):
         for area in areas:
             rec = {'name': area.name,
                  'id': area.ident,
-                 'leaf': True,
+                 'leaf': area.is_leaf(),
                  'parent': area.parent_id,
                  'url': area.get_absolute_url()
             }
@@ -177,23 +177,17 @@ class AreaCommuniqueView(View):
 
         area.communique.edited_by = username
         area.communique.edited_at = now
-        area.communique.description = self.CONTENT.get('communique', '')
+        area.communique.description = self.CONTENT.get('description', '')
         area.communique.save()
 
         return {'success': True, 'data': self.get_data(area)}
 
     def get_data(self, area):
-        return [
-            {'id': 'edited_by',
-             'name': 'Gewijzigd door',
-             'value': area.communique.edited_by},
-            {'id': 'edited_at',
-             'name': 'Gewijzigd op',
-             'value': area.communique.edited_at},
-            {'id': 'description',
-             'name': 'Beschrijving',
-             'value': area.communique.description},
-        ]
+        return {
+            'edited_by': area.communique.edited_by,
+            'edited_at': area.communique.edited_at,
+            'description': area.communique.description
+        }
 
 
 class AreaPropertyView(View):
