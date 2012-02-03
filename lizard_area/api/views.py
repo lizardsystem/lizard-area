@@ -90,14 +90,12 @@ class CatchmentAreaView(View):
 
         if node == 'root':
             areas = Area.objects.filter(
-                    area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED)
+                    area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED,
+                    parent__isnull=True)
 
-        elif node == 'sub':
-            areas = Area.objects.filter(
-                    area_class=Area.AREA_CLASS_DEEL_AAN_AFVOERGEBIED)
         else:
             areas = Area.objects.filter(
-                    parent__ident=node)
+                    parent__id=node)
 
         query = request.GET.get('query', None)
         id = request.GET.get('id', None)
@@ -112,10 +110,11 @@ class CatchmentAreaView(View):
         result = []
         for area in areas:
             rec = {'name': area.name,
-                 'id': area.ident,
+                 'id': area.id,
+                 'ident': area.ident,
                  'leaf': area.is_leaf(),
                  'parent': area.parent_id,
-                 'url': area.get_absolute_url()
+                 #'url': area.get_absolute_url()
             }
             if use_id:
                 rec['id'] = area.id
