@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'lizard_geo',
     'lizard_ui',
     'lizard_map',
+    'lizard_measure',
     'treebeard',
     'djangorestframework',
     'staticfiles',
