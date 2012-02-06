@@ -9,8 +9,7 @@ from lizard_area.views import Homepage
 
 from lizard_area.api.views import RootView
 from lizard_area.api.views import CategoryRootView
-from lizard_area.api.views import KRWAreaView
-from lizard_area.api.views import CatchmentAreaView
+from lizard_area.api.views import AreaViewForTree
 
 from lizard_area.api.resources import CommuniqueResource
 from lizard_area.api.resources import AreaResource
@@ -34,8 +33,7 @@ class ApiTest(TestCase):
         mock_request = MockRequest()
         RootView().get(mock_request)
         CategoryRootView().get(mock_request)
-        KRWAreaView().get(mock_request)
-        CatchmentAreaView().get(mock_request)
+        AreaViewForTree().get(mock_request)
 
     def test_smoke_resource(self):
         CommuniqueResource(None)
