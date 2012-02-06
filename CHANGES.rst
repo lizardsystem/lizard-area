@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.7 (unreleased)
+0.1.7 (2012-02-06)
 ------------------
 
 - Changed function to view a tree of 'aanafvoergebieden'.
