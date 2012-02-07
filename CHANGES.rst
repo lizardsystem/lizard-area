@@ -7,6 +7,8 @@ bin/buildoutChangelog of lizard-area
 
 - Fixed error in test.
 
+- Fixed syntax errors.
+
 
 0.1.7 (2012-02-06)
 ------------------
@@ -30,9 +32,9 @@ bin/buildoutChangelog of lizard-area
 0.1.5 (2012-01-31)
 ------------------
 
-- Added functionality to synchronize area objcten with remote wfs.
+- Added functionality to synchronize area objects with remote wfs.
 
-- Created management command and celery task to run sinchrnization as
+- Created management command and celery task to run synchronisation as
   periodic task.
 
 
