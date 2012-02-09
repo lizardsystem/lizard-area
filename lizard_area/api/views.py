@@ -6,8 +6,10 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 from djangorestframework.views import View
+from lizard_api.base import BaseApiView
 
 from lizard_area.models import Area
+from lizard_area.models import AreaLink
 from lizard_area.models import Category
 
 
@@ -195,3 +197,40 @@ class UserDataView(View):
     def get(self, request):
         areas = Area.objects.all()
         extent = areas.transform(900913).extent()
+
+
+class AreaLinkView(BaseApiView):
+    """
+    see and edit links between areas
+    """
+    model_class = AreaLink
+    name_field = 'link_type'
+
+    field_mapping = {
+        'id': 'id',
+        'area_a': 'area_a__name',
+        'area_b': 'area_b__name',
+    }
+
+
+    def get_object_for_api(self,
+                           link,
+                           flat=True,
+                           size=BaseApiView.COMPLETE,
+                           include_geom=False):
+        """
+        create object of measure
+        """
+
+        output = {
+            'id': link.id,
+            'area_a': self._get_related_object(
+                link.area_a,
+                flat,
+            ),
+            'area_b': self._get_related_object(
+                link.area_b,
+                flat,
+            ),
+        }
+        return output

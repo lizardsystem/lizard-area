@@ -142,6 +142,16 @@ class Communique(GeoObject):
         return reverse('lizard_area_api_communique', kwargs={'pk': self.pk})
 
 
+
+class AreaLink(models.Model):
+    """
+    Link between areas of different type
+    """
+    area_a = models.ForeignKey('Area', related_name='arealink_a')
+    area_b = models.ForeignKey('Area', related_name='arealink_b')
+    link_type = models.CharField(max_length = 24, default='', null=True, blank=True)
+
+
 class Area(Communique, AL_Node):
     """
     KRW waterlichamen en (deel) aan-/afvoergebieden.
@@ -159,7 +169,7 @@ class Area(Communique, AL_Node):
     AREA_CLASS_DICT = dict(AREA_CLASS_CHOICES)
 
     parent = models.ForeignKey('Area', null=True, blank=True)
-    # data_administrator could be removed
+    # data_administrator could be removed)
     data_administrator = models.ForeignKey(DataAdministrator,
                                            null=True, blank=True)
     area_class = models.IntegerField(

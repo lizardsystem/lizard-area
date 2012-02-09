@@ -16,6 +16,7 @@ from lizard_area.api.views import AreaSpecial
 from lizard_area.api.views import AreaViewForTree
 from lizard_area.api.views import AreaCommuniqueView
 from lizard_area.api.views import AreaPropertyView
+from lizard_area.api.views import AreaLinkView
 
 from lizard_area.models import Area
 
@@ -57,4 +58,7 @@ urlpatterns = patterns(
     url(r'^area_special/(?P<ident>[^/]+)/$',
         AreaSpecial.as_view(),
         name=NAME_PREFIX + 'area_special'),
+    url(r'^area_link/$',
+        AreaLinkView.as_view(),
+        name=NAME_PREFIX + 'area_link'),
     )
