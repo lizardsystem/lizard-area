@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.1.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added area_link table, for many2many relations between areas (aanafvoergebieden and krw gebieden)
 
 
 0.1.8 (2012-02-07)
