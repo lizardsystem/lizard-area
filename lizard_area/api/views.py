@@ -136,9 +136,12 @@ class AreaCommuniqueView(View):
         return {'success': True, 'data': self.get_data(area)}
 
     def get_data(self, area):
+
+
+
         return {
-            'edited_by': area.communique.edited_by,
-            'edited_at': area.communique.edited_at,
+            'edited_by': area.communique.edited_by if area.communique.edited_by else '',
+            'edited_at': area.communique.edited_at if area.communique.edited_by else '',
             'description': area.communique.description
         }
 
