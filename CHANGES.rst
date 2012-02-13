@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.10 (unreleased)
+0.1.10 (2012-02-13)
 -------------------
 
 - communique api change
