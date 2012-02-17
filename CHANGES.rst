@@ -2,8 +2,8 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.11 (unreleased)
--------------------
+0.2 (2012-02-17)
+----------------
 
 - Change unicode method of area
 
