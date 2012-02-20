@@ -47,6 +47,9 @@ class AreaViewForTree(View):
     def get(self, request, area_class=None):
 
         node = request.GET.get('node', 'root')
+        start = request.GET.get('start', None)
+        limit = request.GET.get('limit', None)
+        size = request.GET.get('size', None)
 
         if node == 'root':
             areas = Area.objects.filter(
@@ -62,21 +65,36 @@ class AreaViewForTree(View):
         query = request.GET.get('query', None)
 
         if query:
-            areas = areas.filter(name__istartswith=query)[0:25]
+            areas = areas.filter(name__istartswith=query)
+        count = None
+        if not start is  None and not limit is None:
+            start = int(start)
+            limit = int(limit)
+            count=areas.count()
+            areas = areas[start:(start+limit)]
 
         result = []
-        for area in areas:
-            rec = {'name': area.name,
-                 'id': area.id,
-                 'ident': area.ident,
-                 'leaf': area.is_leaf(),
-                 'parent': area.parent_id,
-            }
+        if size == 'id_name':
+            for area in areas:
+                rec = {'name': area.name,
+                     'id': area.id,
+                }
+                result.append(rec)
+        else:
+            for area in areas:
+                rec = {'name': area.name,
+                     'id': area.id,
+                     'ident': area.ident,
+                     'leaf': area.is_leaf(),
+                     'parent': area.parent_id,
+                }
 
-            result.append(rec)
+                result.append(rec)
 
         return {
-            "areas": result
+            "areas": result,
+            "count": count,
+            "total": count
             }
 
 
