@@ -5,7 +5,10 @@ bin/buildoutChangelog of lizard-area
 0.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- limit and start added to area api
+- id_name field configuration for added filter option
+- string, bool or number field also dict allowed with value as id
+- html snippet for related areas
 
 
 0.2 (2012-02-17)

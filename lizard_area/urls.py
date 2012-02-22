@@ -18,5 +18,9 @@ urlpatterns = patterns(
     url(r'^$', Homepage.as_view(), name=NAME_PREFIX + 'homepage'),
     url(r'^api-view/$', ApiView.as_view(), name=NAME_PREFIX + 'api_view'),
     (r'^api/', include('lizard_area.api.urls')),
+    (r'^area_links_panel/$',
+    'lizard_area.views.area_links_panel',
+     {},
+     "lizard_area.area_links_panel"),
     )
 urlpatterns += debugmode_urlpatterns()
