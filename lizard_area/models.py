@@ -201,6 +201,10 @@ class Area(Communique, AL_Node):
     def extent(self):
         return self.geometry.transform(900913, clone=True).extent
 
+    @property
+    def water_manager(self):
+        return '' if self.data_set is None else self.data_set.name
+
 
 class AreaWFSConfiguration(models.Model):
     """Configuration to synchronize areas."""
