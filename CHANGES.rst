@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.1 (unreleased)
+0.2.1 (2012-02-23)
 ------------------
 
 - Limit and start added to area api.
