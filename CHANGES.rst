@@ -2,10 +2,30 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.1.10 (unreleased)
--------------------
+0.2.1 (unreleased)
+------------------
+
+- Limit and start added to area api.
+
+- id_name field configuration for added filter option.
+
+- string, bool or number field also dict allowed with value as id.
+
+- html snippet for related areas.
 
 - Improved performance of AreaViewForTree by reducing database calls.
+
+
+0.2 (2012-02-17)
+----------------
+
+- Change unicode method of area
+
+
+0.1.10 (2012-02-13)
+-------------------
+
+- communique api change
 
 
 0.1.9 (2012-02-13)
