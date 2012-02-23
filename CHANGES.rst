@@ -7,6 +7,8 @@ bin/buildoutChangelog of lizard-area
 
 - Added natural_key to Area model.
 
+- Pinned lizard_api 0.7
+
 
 0.2.1 (2012-02-23)
 ------------------
