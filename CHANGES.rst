@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.1.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Improved performance of AreaViewForTree by reducing database calls.
 
 
 0.1.9 (2012-02-13)
