@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.1.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Added natural_key to Area model.
 
 
 0.1.9 (2012-02-13)
