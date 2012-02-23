@@ -47,6 +47,9 @@ class AreaViewForTree(View):
     def get(self, request, area_class=None):
 
         node = request.GET.get('node', 'root')
+        start = request.GET.get('start', None)
+        limit = request.GET.get('limit', None)
+        size = request.GET.get('size', None)
 
         if node == 'root':
             areas = Area.objects.filter(
@@ -62,21 +65,40 @@ class AreaViewForTree(View):
         query = request.GET.get('query', None)
 
         if query:
-            areas = areas.filter(name__istartswith=query)[0:25]
+            areas = areas.filter(name__istartswith=query)
+        count = None
+        if not start is  None and not limit is None:
+            start = int(start)
+            limit = int(limit)
+            count=areas.count()
+            areas = areas[start:(start+limit)]
 
+        # To make is_leaf call unnecessary
+        area_children = set([
+                area.parent_id for area in Area.objects.filter(parent__in=areas)])
         result = []
-        for area in areas:
-            rec = {'name': area.name,
-                 'id': area.id,
-                 'ident': area.ident,
-                 'leaf': area.is_leaf(),
-                 'parent': area.parent_id,
-            }
+        if size == 'id_name':
+            # What's this????
+            for area in areas:
+                rec = {'name': area.name,
+                     'id': area.id,
+                }
+                result.append(rec)
+        else:
+            for area in areas:
+                rec = {'name': area.name,
+                     'id': area.id,
+                     'ident': area.ident,
+                     'leaf': area.id not in area_children,
+                     'parent': area.parent_id,
+                }
 
-            result.append(rec)
+                result.append(rec)
 
         return {
-            "areas": result
+            "areas": result,
+            "count": count,
+            "total": count
             }
 
 
@@ -136,9 +158,12 @@ class AreaCommuniqueView(View):
         return {'success': True, 'data': self.get_data(area)}
 
     def get_data(self, area):
+
+
+
         return {
-            'edited_by': area.communique.edited_by,
-            'edited_at': area.communique.edited_at,
+            'edited_by': area.communique.edited_by if area.communique.edited_by else '',
+            'edited_at': area.communique.edited_at if area.communique.edited_by else '',
             'description': area.communique.description
         }
 
