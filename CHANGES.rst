@@ -5,7 +5,10 @@ bin/buildoutChangelog of lizard-area
 0.2.3 (unreleased)
 ------------------
 
-- Add property water_manager to Area model.
+- Add property water_manager to Area model (lizardsystem/lizard-portal#18).
+- Updates
+  - nens-graph to 0.,
+  - lizard-measure to 1.9 (from 1.5.8).
 
 
 0.2.2 (2012-02-23)
