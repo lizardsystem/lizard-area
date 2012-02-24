@@ -2,10 +2,32 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.1 (unreleased)
+0.2.3 (unreleased)
 ------------------
 
 - Nothing changed yet.
+
+
+0.2.2 (2012-02-23)
+------------------
+
+- Added natural_key to Area model.
+
+- Pinned lizard_api 0.7
+
+
+0.2.1 (2012-02-23)
+------------------
+
+- Limit and start added to area api.
+
+- id_name field configuration for added filter option.
+
+- string, bool or number field also dict allowed with value as id.
+
+- html snippet for related areas.
+
+- Improved performance of AreaViewForTree by reducing database calls.
 
 
 0.2 (2012-02-17)
