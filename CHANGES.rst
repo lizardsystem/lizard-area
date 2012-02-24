@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.3 (unreleased)
+0.2.3 (2012-02-24)
 ------------------
 
 - Add property water_manager to Area model (lizardsystem/lizard-portal#18).
