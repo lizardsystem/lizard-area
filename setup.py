@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '0.2.1dev'
+version = '0.2.4dev'
 
 long_description = '\n\n'.join([
     open('README.rst').read(),
@@ -18,6 +18,7 @@ install_requires = [
     'lizard-ui >= 3.0',
     'lizard-map >= 3.2',
     'lizard-measure',
+    'lizard-api',
     'lizard-geo',
     'lizard-security',
     'pkginfo',

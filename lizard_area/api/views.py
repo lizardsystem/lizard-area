@@ -73,8 +73,12 @@ class AreaViewForTree(View):
             count=areas.count()
             areas = areas[start:(start+limit)]
 
+        # To make is_leaf call unnecessary
+        area_children = set([
+                area.parent_id for area in Area.objects.filter(parent__in=areas)])
         result = []
         if size == 'id_name':
+            # What's this????
             for area in areas:
                 rec = {'name': area.name,
                      'id': area.id,
@@ -85,7 +89,7 @@ class AreaViewForTree(View):
                 rec = {'name': area.name,
                      'id': area.id,
                      'ident': area.ident,
-                     'leaf': area.is_leaf(),
+                     'leaf': area.id not in area_children,
                      'parent': area.parent_id,
                 }
 
