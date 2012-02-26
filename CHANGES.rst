@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.2.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- added name to links in the area link portal
 
 
 0.2.3 (2012-02-24)
