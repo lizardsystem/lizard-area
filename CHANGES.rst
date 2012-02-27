@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.2.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add property pattern to Area model (lizardsystem/lizard-portal#18).
 
 
 0.2.4 (2012-02-26)
