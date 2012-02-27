@@ -207,6 +207,11 @@ class Area(Communique, AL_Node):
         return self.geometry.transform(900913, clone=True).extent
 
     @property
+    def pattern(self):
+        """Return the string that specifies the critical ESFs."""
+        return '---------'
+
+    @property
     def water_manager(self):
         return '' if self.data_set is None else self.data_set.name
 
