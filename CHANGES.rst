@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.6 (unreleased)
+0.2.6 (2012-03-06)
 ------------------
 
 - Defer geometry field in area manager.
