@@ -156,6 +156,14 @@ class AreaManager(FilteredGeoManager):
     def get_by_natural_key(self, ident):
         return self.get(ident=ident)
 
+    def get_query_set(self):
+        """
+        Defer querying of the geometry field.
+
+        Usually we need only the names.
+        """
+        return super(AreaManager, self).get_query_set().defer('geometry')
+
 
 class Area(Communique, AL_Node):
     """
