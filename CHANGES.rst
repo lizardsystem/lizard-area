@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.7 (unreleased)
+0.2.7 (2012-03-08)
 ------------------
 
 - Add dependency to migration.
