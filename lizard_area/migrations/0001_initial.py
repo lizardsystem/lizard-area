@@ -6,6 +6,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("lizard_geo", "0003_auto__del_unique_geoobject_ident"),
+    )
+
     def forwards(self, orm):
         
         # Adding model 'GeoObjectGroup'
