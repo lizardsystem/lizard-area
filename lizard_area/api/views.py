@@ -147,13 +147,15 @@ class AreaCommuniqueView(View):
 
         area = Area.objects.get(
             ident=self.CONTENT.get('object_id', None))
-        username = User.objects.get(username=request.user).get_full_name()
+        username = request.user.get_full_name()
         now = datetime.today()
 
         area.communique.edited_by = username
         area.communique.edited_at = now
         area.communique.description = self.CONTENT.get('description', '')
         area.communique.save()
+
+        print self.get_data(area)
 
         return {'success': True, 'data': self.get_data(area)}
 
@@ -163,7 +165,7 @@ class AreaCommuniqueView(View):
 
         return {
             'edited_by': area.communique.edited_by if area.communique.edited_by else '',
-            'edited_at': area.communique.edited_at if area.communique.edited_by else '',
+            'edited_at': area.communique.edited_at if area.communique.edited_at else '',
             'description': area.communique.description
         }
 
@@ -204,9 +206,10 @@ class AreaPropertyView(View):
     def get_waterbody_data(self, area):
         """Return waterbody properties as list of dict."""
         data = []
-        if area.waterbody_set.all().exists() == False:
+        a = dir(area)
+        if area.water_bodies.all().exists() == False:
             return data
-        waterbody = area.waterbody_set.all()[0]
+        waterbody = area.water_bodies.all()[0]
         if waterbody.krw_status is not None:
             data.append({'name': 'Status', 'value': waterbody.krw_status.code})
         if waterbody.krw_watertype is not None:
