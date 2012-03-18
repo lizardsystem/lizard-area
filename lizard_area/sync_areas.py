@@ -5,6 +5,7 @@ Adapter for areas
 import httplib
 import logging
 import json
+import base64
 from decimal import Decimal
 
 from datetime import datetime
@@ -155,9 +156,9 @@ def get_ident(properties, area_type):
     area_type -- area type as string for example 'peilgebied'
     """
     if area_type == 'aanafvoergebied':
-        return properties['gafident']
+        return properties['GAFIDENT']
     if area_type == 'peilgebied':
-        return properties['gpgident']
+        return properties['GPGIDENT']
     return None
 
 
@@ -198,10 +199,10 @@ def update_area(area_object, properties, geometry,
     activated = False
     mapping = fields_mapping(area_type)
     for k, v in mapping.items():
-        if k not in properties.keys():
+        if k not in properties.keys() and k.upper() not in properties.keys():
             logger.warning("Wrong fields mapping '%s' NOT in response." % k)
             continue
-        value_krw = properties.get(k)
+        value_krw = properties.get(k) if None else properties.get(k.upper())
         value_vss = getattr(area_object, v)
         if isinstance(value_vss, unicode) and isinstance(value_krw, int):
             value_krw = unicode(value_krw)
@@ -422,7 +423,7 @@ def get_content(response):
         return response.read(), False
 
 
-def sync_areas(username, params_str, area_type, data_set, sync_hist):
+def sync_areas(username, params_str, area_type, data_set, sync_hist, kw):
     """Create a http request, loads the data as json,
     checks or recived data geojson elements, synchronizes the data.
     During the execution logs into SynchronizationHistory.
@@ -435,12 +436,19 @@ def sync_areas(username, params_str, area_type, data_set, sync_hist):
     data_set -- instance object of lizard_security.DataSet
     sync_hist -- object instance of lizard_area.SynchronizationHistory
     """
-    host = "maps.waterschapservices.nl"
-    url = "/wsh/ows?%s" % params_str
+    #host = "maps.waterschapservices.nl"
+    host = "misc.acceptatie.waterschapservices.nl"
+    url = "/ows?%s" % params_str
+    #url = "/wsh/ows?%s"  % params_str 
     kwargs = {"url": url, "host": host, "message": "Connecting.."}
     log_synchistory(sync_hist, **kwargs)
-    connection = httplib.HTTPConnection(host)
-    connection.request("GET", url)
+    connection = httplib.HTTPConnection("%s" %(host))
+    import base64
+    auth = 'Basic ' + str.strip(base64.encodestring('ro_wn:qF3JY34i')) 
+ 
+    headers = {'Authorization': auth}
+
+    connection.request("GET", url, None, headers)
     response = connection.getresponse()
     success = False
     if response.status == 200:
@@ -509,13 +517,13 @@ def run_sync(username, area_type, data_set):
         for config in configurations:
             request_parameters = {
                 'typeName': config.typeName,
-                'cql_filter': config.cql_filter,
+                #'cql_filter': config.cql_filter,
                 'maxFeatures': config.maxFeatures}
             request_parameters.update(default_request_parameters())
             params_str = '&'.join(
                 ['%s=%s' % (k, v) for k, v in request_parameters.items()])
             success = sync_areas(username, str(params_str), area_type,
-                                 data_set, sync_hist)
+                                 data_set, sync_hist, request_parameters)
     else:
         message = "There are no any configuration for %s of %s" % (
             area_type, data_set.name)

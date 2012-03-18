@@ -213,9 +213,13 @@ class AreaWFSConfiguration(models.Model):
 
     name = models.CharField(max_length=30, null=True, blank=True)
     area_type = models.CharField(max_length=50, choices=AREA_TYPES)
+    host = models.CharField(max_length=128, null=True, blank=True)
+    url = models.CharField(max_length=128, null=True, blank=True)
     maxFeatures = models.IntegerField(default=64000)
     typeName = models.CharField(max_length=50)
     cql_filter = models.CharField(max_length=50)
+    username = models.CharField(max_length=64, null=True, blank=True)
+    password = models.CharField(max_length=64, null=True, blank=True)
     data_set = models.ForeignKey(DataSet)
 
     def __unicode__(self):
