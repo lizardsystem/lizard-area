@@ -1,0 +1,22 @@
+{# Screen with category triee and workspaces on the left and map on the right. #}
+<div class="lizard">
+
+    {% for area_type in related_areas  %}
+    {{ area_type.name }}:<br>
+    {% for linked_area in area_type.items  %}
+<div class="link" object_id="{{ linked_area.ident }}"
+object_name="{{ linked_area.name }}"
+{% if area_type.template %}
+template="{{ area_type.template }}"
+{% endif %}
+{% if area_type.object_type %}
+object_type="{{ area_type.object_type }}"
+{% endif %}
+{% if area_type.headertab %}
+headertab="{{ area_type.headertab }}"
+{% endif %}
+>- {{ linked_area.name }} </div>
+    {% endfor %}
+    {% endfor %}
+</div>
+

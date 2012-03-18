@@ -142,14 +142,27 @@ class Communique(GeoObject):
         return reverse('lizard_area_api_communique', kwargs={'pk': self.pk})
 
 
-
 class AreaLink(models.Model):
     """
     Link between areas of different type
     """
     area_a = models.ForeignKey('Area', related_name='arealink_a')
     area_b = models.ForeignKey('Area', related_name='arealink_b')
-    link_type = models.CharField(max_length = 24, default='', null=True, blank=True)
+    link_type = models.CharField(max_length=24, default='',
+                                 null=True, blank=True)
+
+
+class AreaManager(FilteredGeoManager):
+    def get_by_natural_key(self, ident):
+        return self.get(ident=ident)
+
+    def get_query_set(self):
+        """
+        Defer querying of the geometry field.
+
+        Usually we need only the names.
+        """
+        return super(AreaManager, self).get_query_set().defer('geometry')
 
 
 class Area(Communique, AL_Node):
@@ -184,7 +197,7 @@ class Area(Communique, AL_Node):
     data_set = models.ForeignKey(DataSet,
                                  null=True,
                                  blank=True)
-    objects = FilteredGeoManager()
+    objects = AreaManager()
 
     # For treebeard.
     node_order_by = ['name']
@@ -193,19 +206,25 @@ class Area(Communique, AL_Node):
         ordering = ('name', )
 
     def __unicode__(self):
-        try:
-            return '%s (%s - %s)' % (
-                self.name, self.AREA_CLASS_DICT[self.area_class],
-                self.data_set.name)
-        except:
-            return '%s (%s)' % (
-                self.name, self.AREA_CLASS_DICT[self.area_class])
+        return '%s (%s)' % (self.name, self.ident)
 
     def get_absolute_url(self):
         return reverse('lizard_area_api_area', kwargs={'pk': self.pk})
 
     def extent(self):
         return self.geometry.transform(900913, clone=True).extent
+
+    @property
+    def pattern(self):
+        """Return the string that specifies the critical ESFs."""
+        return '---------'
+
+    @property
+    def water_manager(self):
+        return '' if self.data_set is None else self.data_set.name
+
+    def natural_key(self):
+        return (self.ident, )
 
 
 class AreaWFSConfiguration(models.Model):

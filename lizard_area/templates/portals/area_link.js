@@ -20,6 +20,8 @@
             flex:1,
             xtype: 'leditgrid',
             columnLines: true,
+            usePagination: false,
+            enterEditSummary: false,
             plugins: [
                 'applycontext'
             ],
