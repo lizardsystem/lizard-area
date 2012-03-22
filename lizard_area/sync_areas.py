@@ -25,6 +25,37 @@ from lizard_geo.models import GeoObjectGroup
 logger = logging.getLogger(__name__)
 
 
+FIELDS_MAPPING_PEILGEBIED = {
+    'gpgident': 'ident',
+    'gpgnaam': 'name',
+    'iws_dtmwijzmeta': 'dt_latestchanged_krw',
+    'gpgoppvl': 'surface',
+    'gpgsoort': 'areasort',
+    'gpgsoort_krw': 'areasort_krw',
+    'krwwatertype': 'watertype_krw'
+}
+
+
+FIELDS_MAPPING_AANAFVOERGEBIED = {
+    'gafident': 'ident',
+    'gafnaam': 'name',
+    'iws_dtmwijzmeta': 'dt_latestchanged_krw',
+    'gafoppvl': 'surface',
+    'gafsoort': 'areasort',
+    'gafsoort_krw': 'areasort_krw',
+    'krwwatertype': 'watertype_krw'
+}
+
+
+FIELDS_MAPPING_EXCEPTION = {
+    'fsoort_krw': 'gafsoort_krw',
+    'wwatertype': 'krwwatertype',
+    'angafident': 'onderdeelvangafident',
+    'angpgident': 'onderdeelvangpgident',
+    'tailniveau': 'detailniveau'
+}
+    
+
 def log_synchistory(sync_hist, **kwargs):
     """Save synchronistaion history.
 
@@ -63,21 +94,9 @@ def fields_mapping(area_type):
     area_type - 'peilgebied' or 'aanafvoergebied'.
     """
     if area_type.lower() == 'peilgebied':
-        return {'gpgident': 'ident',
-                'gpgnaam': 'name',
-                'iws_dtmwijzmeta': 'dt_latestchanged_krw',
-                'gpgoppvl': 'surface',
-                'gpgsoort': 'areasort',
-                'gpgsoort': 'areasort_krw',
-                'krwwatertype': 'watertype_krw'}
+        return FIELDS_MAPPING_PEILGEBIED
     elif area_type.lower() == 'aanafvoergebied':
-        return {'gafident': 'ident',
-                'gafnaam': 'name',
-                'iws_dtmwijzmeta': 'dt_latestchanged_krw',
-                'gafoppvl': 'surface',
-                'gafsoort': 'areasort',
-                'gafsoort': 'areasort_krw',
-                'krwwatertype': 'watertype_krw'}
+        return FIELDS_MAPPING_AANAFVOERGEBIED
     else:
         return {}
 
@@ -156,18 +175,16 @@ def get_ident(properties, area_type):
     area_type -- area type as string for example 'peilgebied'
     """
     if area_type == 'aanafvoergebied':
-        return properties['GAFIDENT']
+        return properties.get('gafident')
     if area_type == 'peilgebied':
-        return properties['GPGIDENT']
+        return properties.get('gpgident')
     return None
 
 
 def get_parent_area(properties):
     """Return parent object of passed area object."""
-
     gafident_parent = properties.get('onderdeelvangafident', None)
     gpgident_parent = properties.get('onderdeelvangpgident', None)
-
     parent_areas1 = Area.objects.filter(ident=gafident_parent)
     parent_areas2 = Area.objects.filter(ident=gpgident_parent)
 
@@ -176,13 +193,11 @@ def get_parent_area(properties):
     elif parent_areas2.exists():
         return parent_areas2[0]
     else:
-        logger.debug('Parent area gafident=%s and gpgident=%s '\
-                     'does not exist.' % (gafident_parent, gpgident_parent))
         return None
 
 
 def update_area(area_object, properties, geometry,
-                area_type, username):
+                area_type, username, data_set):
     """Updates a passed area object. Returns
     amount of activated and updated objects.
 
@@ -199,10 +214,10 @@ def update_area(area_object, properties, geometry,
     activated = False
     mapping = fields_mapping(area_type)
     for k, v in mapping.items():
-        if k not in properties.keys() and k.upper() not in properties.keys():
+        if k not in properties.keys():
             logger.warning("Wrong fields mapping '%s' NOT in response." % k)
             continue
-        value_krw = properties.get(k) if None else properties.get(k.upper())
+        value_krw = properties.get(k)
         value_vss = getattr(area_object, v)
         if isinstance(value_vss, unicode) and isinstance(value_krw, int):
             value_krw = unicode(value_krw)
@@ -235,14 +250,18 @@ def update_area(area_object, properties, geometry,
         setattr(area_object, 'area_type', area_type)
         updated = True
 
-    parent_area = get_parent_area(properties)
-    if getattr(area_object, 'parent') != parent_area:
-        setattr(area_object, 'parent', parent_area)
-        updated = True
+    # parent_area = get_parent_area(properties)
+    # if getattr(area_object, 'parent') != parent_area:
+    #     setattr(area_object, 'parent', parent_area)
+    #     updated = True
 
     area_class = Area.AREA_CLASS_AAN_AFVOERGEBIED
     if getattr(area_object, 'area_class') != area_class:
         setattr(area_object, 'area_class', area_class)
+        updated = True
+    
+    if getattr(area_object, 'data_set') != data_set:
+        setattr(area_object, 'data_set', data_set)
         updated = True
 
     return updated, activated
@@ -271,17 +290,19 @@ def set_parent_relation(features, area_type):
     Arguments:
 
     features -- list of dict contains krw areas from wfs
-    area_type -- area type as string for example 'peilgebied'
+    area_type -- area type as string, for example 'peilgebied'
     """
+    logger.info("Create a child-parent relation.")
     for feature in features:
-        ident = get_ident(feature['properties'], area_type)
+        properties = properties_keys_to_lower(feature['properties'])
+        ident = get_ident(properties, area_type)
         areas = Area.objects.filter(ident=ident)
         if areas.exists():
             area = areas[0]
             area.parent = get_parent_area(feature['properties'])
             area.save()
         else:
-            logger.error('Area with krw_ident=%s does not exist.' % ident)
+            logger.info('Area with krw_ident=%s does not exist.' % ident)
 
 
 def invalidate(content, area_type, data_set):
@@ -306,7 +327,7 @@ def invalidate(content, area_type, data_set):
     for area in vss_areas:
         is_active = False
         for feature in content:
-            properties = feature['properties']
+            properties = properties_keys_to_lower(feature['properties'])
             ident_krw = get_ident(properties, area_type)
             detailniveau = properties.get('detailniveau', None)
             if area.ident == ident_krw and detailniveau is not None:
@@ -327,7 +348,7 @@ def get_or_create_area(geo_object_group, geometry, ident, data_set):
     created = False
     area_object = None
     try:
-        area_object = Area.objects.get(ident=ident, data_set=data_set)
+        area_object = Area.objects.get(ident=ident)
         return area_object, created
     except Area.DoesNotExist as ex:
         area_object = Area(ident=ident,
@@ -337,12 +358,21 @@ def get_or_create_area(geo_object_group, geometry, ident, data_set):
                            area_class=Area.AREA_CLASS_AAN_AFVOERGEBIED)
         created = True
         return area_object, created
-    except Area.MultipleObjectsReturned as ex:
-        logger.error(".".join(map(str, ex.args)))
     except Exception as ex:
         logger.error(".".join(map(str, ex.args)))
     return area_object, created
 
+
+def properties_keys_to_lower(orig_dict):
+    """Set keys to lawer case, map exception keys."""
+    
+    special_dict = {}
+    for key, value in orig_dict.iteritems():
+        lowercase_key = key.lower()
+        new_key = FIELDS_MAPPING_EXCEPTION.get(lowercase_key, lowercase_key)
+        special_dict[new_key] = value
+
+    return special_dict
 
 def create_update_areas(content, username, area_type, data_set, sync_hist):
     """Creates or updates areas.
@@ -364,7 +394,7 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
     amount_deactivated = 0
 
     for feature in content['features']:
-        properties = feature['properties']
+        properties = properties_keys_to_lower(feature['properties'])
         geometry = feature['geometry']
 
         geometry_mp = geometry2mp(geometry)
@@ -378,7 +408,8 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
         if area_object is None:
             continue
         updated, activated = update_area(area_object, properties,
-                                         geometry, area_type, username)
+                                         geometry, area_type,
+                                         username, data_set)
         set_extra_values(area_object, created, updated)
         if created:
             amount_created = amount_created + 1
@@ -400,7 +431,6 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
                 logger.error(".".join(map(str, ex.args)))
                 logger.error('Object ident="%s" is not saved' % ident)
 
-    set_parent_relation(content['features'], area_type)
     amount_deactivated = invalidate(content['features'], area_type, data_set)
     amount_synchronized = len(content['features'])
     log_synchistory(sync_hist, **{'amount_created': amount_created,
@@ -423,7 +453,7 @@ def get_content(response):
         return response.read(), False
 
 
-def sync_areas(username, params_str, area_type, data_set, sync_hist, kw):
+def sync_areas(username, url, area_type, data_set, sync_hist, kw):
     """Create a http request, loads the data as json,
     checks or recived data geojson elements, synchronizes the data.
     During the execution logs into SynchronizationHistory.
@@ -435,20 +465,19 @@ def sync_areas(username, params_str, area_type, data_set, sync_hist, kw):
     area_type -- area type as string for example 'peilgebied'
     data_set -- instance object of lizard_security.DataSet
     sync_hist -- object instance of lizard_area.SynchronizationHistory
+    kw -- connection parameters as dict containing hostname and login data
     """
     #host = "maps.waterschapservices.nl"
-    host = "misc.acceptatie.waterschapservices.nl"
-    url = "/ows?%s" % params_str
-    #url = "/wsh/ows?%s"  % params_str 
+    host = kw["host"]
+    #url = "/wsh/ows?%s"  % params_str
     kwargs = {"url": url, "host": host, "message": "Connecting.."}
     log_synchistory(sync_hist, **kwargs)
-    connection = httplib.HTTPConnection("%s" %(host))
-    import base64
-    auth = 'Basic ' + str.strip(base64.encodestring('ro_wn:qF3JY34i')) 
- 
-    headers = {'Authorization': auth}
-
-    connection.request("GET", url, None, headers)
+    connection = httplib.HTTPConnection(host)
+    if kw.get('auth') is not None:
+        headers = {'Authorization': kw.get('auth')}
+        connection.request("GET", url, None, headers)
+    else:
+        connection.request("GET", url)
     response = connection.getresponse()
     success = False
     if response.status == 200:
@@ -461,6 +490,7 @@ def sync_areas(username, params_str, area_type, data_set, sync_hist, kw):
             logger.debug(message)
             create_update_areas(content, username,
                                 area_type, data_set, sync_hist)
+            set_parent_relation(content['features'], area_type)
             success = True
         else:
             message = "Content is not a GeoJSON format or empty."
@@ -491,6 +521,44 @@ def default_request_parameters():
     return parameters
 
 
+def set_request_parameters(config):
+    request_parameters = default_request_parameters()
+    if config.typeName is not None and config.typeName != '':
+        request_parameters['typeName'] = config.typeName
+    if config.cql_filter is not None and config.cql_filter != '':
+        request_parameters['cql_filter'] = config.cql_filter
+    if config.maxFeatures is not None:
+        request_parameters['maxFeatures'] = config.maxFeatures
+    return request_parameters
+
+
+def set_url(request_parameters, config):
+    url = None
+    if config.path is None:
+        return url
+    if config.url is None or config.url == "":
+        params_string = '&'.join(
+            ['%s=%s' % (k, v) for k, v in request_parameters.items()])
+        return "%s?%s" % (config.path, params_string)
+    else:
+        return "%s?%s" % (config.path, config.url)
+
+
+def set_connection_parameters(config):
+    connection_parameters = {}
+    if config.host is None:
+        return None
+    connection_parameters['host'] = config.host
+    if config.username == '':
+        return connection_parameters
+    if config.username is None:
+        return connection_parameters
+    auth = 'Basic ' + str.strip(base64.encodestring(
+            '%s:%s' % (config.username, config.password)))
+    connection_parameters['auth'] = auth
+    return connection_parameters
+
+
 def run_sync(username, area_type, data_set):
     """Retrieves the request configuration,
     creates a request string and starts syncronization.
@@ -515,15 +583,15 @@ def run_sync(username, area_type, data_set):
     sync_hist.save()
     if configurations.exists():
         for config in configurations:
-            request_parameters = {
-                'typeName': config.typeName,
-                #'cql_filter': config.cql_filter,
-                'maxFeatures': config.maxFeatures}
-            request_parameters.update(default_request_parameters())
-            params_str = '&'.join(
-                ['%s=%s' % (k, v) for k, v in request_parameters.items()])
-            success = sync_areas(username, str(params_str), area_type,
-                                 data_set, sync_hist, request_parameters)
+            url = set_url(set_request_parameters(config), config)
+            connection_parameters = set_connection_parameters(config)
+            if connection_parameters is None or url is None:
+                logger.warning(
+                    'WFS is not properly configured for configuration "%s".' % (
+                        config.name))
+                continue
+            success = sync_areas(username, url, area_type,
+                                 data_set, sync_hist, connection_parameters)
     else:
         message = "There are no any configuration for %s of %s" % (
             area_type, data_set.name)
