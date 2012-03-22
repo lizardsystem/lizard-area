@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.2.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Chenges to synchronize 'aanafvoergebieden' with secure 'geovoorziening'.
 
 
 0.2.8 (2012-03-12)
