@@ -22,8 +22,6 @@ from lizard_area.models import SynchronizationHistory
 
 from lizard_geo.models import GeoObjectGroup
 
-logger = logging.getLogger(__name__)
-
 
 FIELDS_MAPPING_PEILGEBIED = {
     'gpgident': 'ident',
@@ -54,7 +52,9 @@ FIELDS_MAPPING_EXCEPTION = {
     'angpgident': 'onderdeelvangpgident',
     'tailniveau': 'detailniveau'
 }
-    
+
+logger = logging.getLogger(__name__)
+
 
 def log_synchistory(sync_hist, **kwargs):
     """Save synchronistaion history.
@@ -66,6 +66,7 @@ def log_synchistory(sync_hist, **kwargs):
     """
     for k, v in kwargs.items():
         setattr(sync_hist, k, v)
+    logger.info(' | '.join(["%s=%s" % (k, v) for k, v  in kwargs.items()]))
     sync_hist.save()
 
 
@@ -225,6 +226,8 @@ def update_area(area_object, properties, geometry,
             value_krw = unicode(value_krw)
         if isinstance(value_vss, date) and isinstance(value_krw, unicode):
             value_vss = unicode(value_vss)
+        if isinstance(value_krw, unicode):
+            value_krw = value_krw.encode('ascii', errors='ignore')
         if value_vss != value_krw:
             setattr(area_object, v, value_krw)
             updated = True
@@ -259,7 +262,7 @@ def update_area(area_object, properties, geometry,
     if getattr(area_object, 'area_class') != area_class:
         setattr(area_object, 'area_class', area_class)
         updated = True
-    
+
     if getattr(area_object, 'data_set') != data_set:
         setattr(area_object, 'data_set', data_set)
         updated = True
@@ -299,7 +302,9 @@ def set_parent_relation(features, area_type):
         areas = Area.objects.filter(ident=ident)
         if areas.exists():
             area = areas[0]
-            area.parent = get_parent_area(feature['properties'])
+            area.parent = get_parent_area(properties)
+            logger.debug("Set parent='%s' to child='%s'." % (
+                    area.parent, ident))
             area.save()
         else:
             logger.info('Area with krw_ident=%s does not exist.' % ident)
@@ -365,7 +370,6 @@ def get_or_create_area(geo_object_group, geometry, ident, data_set):
 
 def properties_keys_to_lower(orig_dict):
     """Set keys to lawer case, map exception keys."""
-    
     special_dict = {}
     for key, value in orig_dict.iteritems():
         lowercase_key = key.lower()
@@ -373,6 +377,7 @@ def properties_keys_to_lower(orig_dict):
         special_dict[new_key] = value
 
     return special_dict
+
 
 def create_update_areas(content, username, area_type, data_set, sync_hist):
     """Creates or updates areas.
@@ -467,14 +472,14 @@ def sync_areas(username, url, area_type, data_set, sync_hist, kw):
     sync_hist -- object instance of lizard_area.SynchronizationHistory
     kw -- connection parameters as dict containing hostname and login data
     """
-    #host = "maps.waterschapservices.nl"
     host = kw["host"]
-    #url = "/wsh/ows?%s"  % params_str
     kwargs = {"url": url, "host": host, "message": "Connecting.."}
     log_synchistory(sync_hist, **kwargs)
     connection = httplib.HTTPConnection(host)
     if kw.get('auth') is not None:
-        headers = {'Authorization': kw.get('auth')}
+        headers = {"Authorization": kw.get('auth'),
+                   "Content-type": "application/json",
+                   "Accept": "text/plain"}
         connection.request("GET", url, None, headers)
     else:
         connection.request("GET", url)
@@ -587,7 +592,7 @@ def run_sync(username, area_type, data_set):
             connection_parameters = set_connection_parameters(config)
             if connection_parameters is None or url is None:
                 logger.warning(
-                    'WFS is not properly configured for configuration "%s".' % (
+                    'WFS is not properly configured for "%s".' % (
                         config.name))
                 continue
             success = sync_areas(username, url, area_type,
