@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.2.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Removes the requirement on Python 2.7 (Python 2.6 should work also).
 
 
 0.2.9 (2012-03-23)
