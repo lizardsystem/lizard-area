@@ -1,8 +1,6 @@
 {% load get_grid %}
 {% load get_portal_template %}
 
-{% if perms.auth.is_analyst %}
-
 {
     itemId: 'gebiedslink-beheer',
     title: 'gebiedenlink',
@@ -74,6 +72,3 @@
         }]
 	}]
 }
-{% else %}
-    {% get_portal_template geen_toegang %}
-{% endif %}
