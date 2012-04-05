@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.10 (unreleased)
+0.2.10 (2012-04-05)
 -------------------
 
 - Fixes the issue that a user with the right credentials could not access the
