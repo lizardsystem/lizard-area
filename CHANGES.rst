@@ -5,6 +5,9 @@ bin/buildoutChangelog of lizard-area
 0.2.10 (unreleased)
 -------------------
 
+- Fixes the issue that a user with the right credentials could not access the
+  screen to manage the coupling of KRW water bodies and catchment areas (Pp
+  222).
 - Removes the requirement on Python 2.7 (Python 2.6 should work also).
 
 
