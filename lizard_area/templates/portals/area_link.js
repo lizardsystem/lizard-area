@@ -60,7 +60,7 @@
                         fields: ['id', 'name'],
                         proxy: {
                             type: 'ajax',
-                            url: '/area/api/catchment-areas/?_accept=application%2Fjson&size=id_name',
+                            url: '/area/api/catchment-areas/?_accept=application%2Fjson&node=&size=id_name',
                             reader: {
                                 type: 'json',
                                 root: 'areas'

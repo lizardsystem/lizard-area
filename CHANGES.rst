@@ -5,6 +5,8 @@ bin/buildoutChangelog of lizard-area
 0.2.11 (unreleased)
 -------------------
 
+- area link form now lists deel aan-afvoergebieden as well.
+
 - api/catchment-areas (using AreaViewForTree) now has:
   - aan-afvoergebieden and deel aan-afvoergebieden
   - AreaViewForTree parent node is now optional
