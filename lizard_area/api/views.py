@@ -4,6 +4,7 @@ API views not coupled to models.
 from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from djangorestframework.views import View
 from lizard_api.base import BaseApiView
@@ -43,24 +44,34 @@ class CategoryRootView(View):
 class AreaViewForTree(View):
     """
     Show areas in a way that is usefull for a dynamic loading extjs tree .
+
+    Filter using:
+    - node == 'root', '' or parent_id
+    - area_classes: a list of area classes
     """
-    def get(self, request, area_class=None):
+    def get(self, request, area_classes=None):
 
         node = request.GET.get('node', 'root')
         start = request.GET.get('start', None)
         limit = request.GET.get('limit', None)
         size = request.GET.get('size', None)
 
-        if node == 'root':
-            areas = Area.objects.filter(
-                    parent__isnull=True)
+        # Enable this when sync functions are ready for it.
+        #areas = Area.objects.filter(is_active=True)
+        areas = Area.objects.all()
 
+        if not node:
+            pass
+        elif node == 'root':
+            areas = areas.filter(
+                    parent__isnull=True)
         else:
-            areas = Area.objects.filter(
+            areas = areas.filter(
                     parent__id=node)
 
-        if area_class is not None:
-            areas = areas.filter(area_class=area_class)
+        if area_classes is not None:
+            # Assume area_class is a tuple or list
+            areas = areas.filter(area_class__in=area_classes)
 
         query = request.GET.get('query', None)
 
@@ -77,8 +88,9 @@ class AreaViewForTree(View):
         area_children = set([
                 area.parent_id for area in Area.objects.filter(parent__in=areas)])
         result = []
+
         if size == 'id_name':
-            # What's this????
+            # Only return names and ids.
             for area in areas:
                 rec = {'name': area.name,
                      'id': area.id,
@@ -86,7 +98,8 @@ class AreaViewForTree(View):
                 result.append(rec)
         else:
             for area in areas:
-                rec = {'name': area.name,
+                name = area.name
+                rec = {'name': name,
                      'id': area.id,
                      'ident': area.ident,
                      'leaf': area.id not in area_children,

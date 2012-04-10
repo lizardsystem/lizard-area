@@ -5,7 +5,10 @@ bin/buildoutChangelog of lizard-area
 0.2.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- api/catchment-areas (using AreaViewForTree) now has:
+  - aan-afvoergebieden and deel aan-afvoergebieden
+  - AreaViewForTree parent node is now optional
+  (- TODO: AreaViewForTree only lists objects that are active)
 
 
 0.2.10 (2012-04-05)
