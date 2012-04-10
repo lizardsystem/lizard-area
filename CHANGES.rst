@@ -2,8 +2,8 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.11 (unreleased)
--------------------
+0.3 (2012-04-10)
+----------------
 
 - area link form now lists deel aan-afvoergebieden as well.
 
