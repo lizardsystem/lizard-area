@@ -62,7 +62,6 @@ class AdapterArea(workspace.WorkspaceItemAdapter):
             area_style = mapnik.load_map_from_string(
                 dummy_map,
                 str(category.mapnik_xml_style_sheet.style))
-            print area_style
         else:
             area_looks = mapnik.PolygonSymbolizer(mapnik.Color("#ff8877"))
             line_looks = mapnik.LineSymbolizer(mapnik.Color('#997766'), 1)

@@ -155,8 +155,6 @@ class AreaCommuniqueView(View):
         area.communique.description = self.CONTENT.get('description', '')
         area.communique.save()
 
-        print self.get_data(area)
-
         return {'success': True, 'data': self.get_data(area)}
 
     def get_data(self, area):
