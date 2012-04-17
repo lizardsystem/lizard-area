@@ -1,8 +1,6 @@
 {% load get_grid %}
 {% load get_portal_template %}
 
-{% if perms.auth.is_analyst %}
-
 {
     itemId: 'gebiedslink-beheer',
     title: 'gebiedenlink',
@@ -62,7 +60,7 @@
                         fields: ['id', 'name'],
                         proxy: {
                             type: 'ajax',
-                            url: '/area/api/catchment-areas/?_accept=application%2Fjson&size=id_name',
+                            url: '/area/api/catchment-areas/?_accept=application%2Fjson&node=&size=id_name',
                             reader: {
                                 type: 'json',
                                 root: 'areas'
@@ -74,6 +72,3 @@
         }]
 	}]
 }
-{% else %}
-    {% get_portal_template geen_toegang %}
-{% endif %}

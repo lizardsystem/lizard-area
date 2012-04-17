@@ -24,8 +24,8 @@ class GeoObjectGroupAdmin(admin.ModelAdmin):
 
 
 class AreaAdmin(admin.ModelAdmin):
-    list_filter = ('data_set', 'area_class', )
-    list_display = ('name', 'ident', 'id', 'area_class')
+    list_filter = ('data_set', 'area_class', 'is_active', )
+    list_display = ('name', 'ident', 'id', 'area_class', 'is_active', )
 
 
 # admin.site.register(GeoObject)

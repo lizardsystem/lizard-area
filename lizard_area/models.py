@@ -8,7 +8,6 @@ from django.core.urlresolvers import reverse
 
 from lizard_geo.models import GeoObject
 from lizard_geo.models import GeoObjectGroup
-
 from lizard_security.manager import FilteredGeoManager
 from lizard_security.models import DataSet
 
@@ -213,11 +212,6 @@ class Area(Communique, AL_Node):
 
     def extent(self):
         return self.geometry.transform(900913, clone=True).extent
-
-    @property
-    def pattern(self):
-        """Return the string that specifies the critical ESFs."""
-        return '---------'
 
     @property
     def water_manager(self):

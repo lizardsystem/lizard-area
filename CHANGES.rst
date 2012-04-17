@@ -2,10 +2,30 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.2.10 (unreleased)
--------------------
+0.4 (unreleased)
+----------------
 
 - Removed print statements.
+
+
+0.3 (2012-04-10)
+----------------
+
+- area link form now lists deel aan-afvoergebieden as well.
+
+- api/catchment-areas (using AreaViewForTree) now has:
+  - aan-afvoergebieden and deel aan-afvoergebieden
+  - AreaViewForTree parent node is now optional
+  (- TODO: AreaViewForTree only lists objects that are active)
+
+
+0.2.10 (2012-04-05)
+-------------------
+
+- Fixes the issue that a user with the right credentials could not access the
+  screen to manage the coupling of KRW water bodies and catchment areas (Pp
+  222).
+- Removes the requirement on Python 2.7 (Python 2.6 should work also).
 
 
 0.2.9 (2012-03-23)

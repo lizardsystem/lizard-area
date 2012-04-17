@@ -227,7 +227,7 @@ def update_area(area_object, properties, geometry,
         if isinstance(value_vss, date) and isinstance(value_krw, unicode):
             value_vss = unicode(value_vss)
         if isinstance(value_krw, unicode):
-            value_krw = value_krw.encode('ascii', errors='ignore')
+            value_krw = value_krw.encode('ascii', 'ignore')
         if value_vss != value_krw:
             setattr(area_object, v, value_krw)
             updated = True
