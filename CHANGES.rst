@@ -6,6 +6,7 @@ bin/buildoutChangelog of lizard-area
 ----------------
 
 - Removed print statements.
+- Make it possible to select a flat area list by flat=true on the url
 
 
 0.3 (2012-04-10)

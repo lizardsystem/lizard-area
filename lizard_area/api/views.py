@@ -55,12 +55,13 @@ class AreaViewForTree(View):
         start = request.GET.get('start', None)
         limit = request.GET.get('limit', None)
         size = request.GET.get('size', None)
+        flat = request.GET.get('flat', None)
 
         # Enable this when sync functions are ready for it.
         #areas = Area.objects.filter(is_active=True)
         areas = Area.objects.all()
 
-        if not node:
+        if (not node) or flat == 'true':
             pass
         elif node == 'root':
             areas = areas.filter(
