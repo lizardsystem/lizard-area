@@ -5,7 +5,8 @@ bin/buildoutChangelog of lizard-area
 0.3.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added additional info to 'Informatie KRW-waterlichaam' (AreaPropertyView)
+  view, issue #181.
 
 
 0.3.1 (2012-04-18)

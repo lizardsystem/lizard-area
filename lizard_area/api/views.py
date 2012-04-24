@@ -223,10 +223,14 @@ class AreaPropertyView(View):
             return data
         waterbody = area.water_bodies.all()[0]
         if waterbody.krw_status is not None:
-            data.append({'name': 'Status', 'value': waterbody.krw_status.code})
+            status = "%s - %s" % (
+                waterbody.krw_status.code, waterbody.krw_status.description)
+            data.append({'name': 'Status', 'value': status})
         if waterbody.krw_watertype is not None:
+            krw_watertype = "%s - %s" % (
+               waterbody.krw_watertype.code, waterbody.krw_watertype.description) 
             data.append({'name': 'Watertype',
-                         'value': waterbody.krw_watertype.code})
+                         'value': krw_watertype})
         return data
 
 
