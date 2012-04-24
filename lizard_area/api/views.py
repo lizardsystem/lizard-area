@@ -3,8 +3,6 @@ API views not coupled to models.
 """
 from datetime import datetime
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
-from django.db.models import Q
 
 from djangorestframework.views import View
 from lizard_api.base import BaseApiView
@@ -82,8 +80,8 @@ class AreaViewForTree(View):
         if not start is  None and not limit is None:
             start = int(start)
             limit = int(limit)
-            count=areas.count()
-            areas = areas[start:(start+limit)]
+            count = areas.count()
+            areas = areas[start:(start + limit)]
 
         # To make is_leaf call unnecessary
         area_children = set([
@@ -173,8 +171,6 @@ class AreaCommuniqueView(View):
 
     def get_data(self, area):
 
-
-
         return {
             'edited_by': area.communique.edited_by if area.communique.edited_by else '',
             'edited_at': area.communique.edited_at if area.communique.edited_at else '',
@@ -218,7 +214,6 @@ class AreaPropertyView(View):
     def get_waterbody_data(self, area):
         """Return waterbody properties as list of dict."""
         data = []
-        a = dir(area)
         if area.water_bodies.all().exists() == False:
             return data
         waterbody = area.water_bodies.all()[0]
@@ -228,7 +223,7 @@ class AreaPropertyView(View):
             data.append({'name': 'Status', 'value': status})
         if waterbody.krw_watertype is not None:
             krw_watertype = "%s - %s" % (
-               waterbody.krw_watertype.code, waterbody.krw_watertype.description) 
+               waterbody.krw_watertype.code, waterbody.krw_watertype.description)
             data.append({'name': 'Watertype',
                          'value': krw_watertype})
         return data
@@ -255,7 +250,6 @@ class AreaLinkView(BaseApiView):
         'area_a': 'area_a__name',
         'area_b': 'area_b__name',
     }
-
 
     def get_object_for_api(self,
                            link,
