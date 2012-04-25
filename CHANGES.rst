@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.3.3 (unreleased)
+0.3.3 (2012-04-25)
 ------------------
 
 - Updated fields for 'Gebiedsinformatie' portlet, Pp #193.
