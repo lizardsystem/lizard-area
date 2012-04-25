@@ -5,7 +5,12 @@ bin/buildoutChangelog of lizard-area
 0.3.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Updated fields for 'Gebiedsinformatie' portlet, Pp #193.
+
+- Removed 'watertype_krw' field from 'Communique' model.
+
+- Added functionality to create/update waterbodies for 'aanafvoergebieden' 
+  during the synchronisation proces with 'geovoorziening'.
 
 
 0.3.2 (2012-04-24)

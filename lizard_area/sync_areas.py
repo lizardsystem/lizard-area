@@ -22,6 +22,9 @@ from lizard_area.models import SynchronizationHistory
 
 from lizard_geo.models import GeoObjectGroup
 
+from lizard_measure.models import KRWWatertype
+from lizard_measure.models import WaterBody
+
 
 FIELDS_MAPPING_PEILGEBIED = {
     'gpgident': 'ident',
@@ -29,8 +32,7 @@ FIELDS_MAPPING_PEILGEBIED = {
     'iws_dtmwijzmeta': 'dt_latestchanged_krw',
     'gpgoppvl': 'surface',
     'gpgsoort': 'areasort',
-    'gpgsoort_krw': 'areasort_krw',
-    'krwwatertype': 'watertype_krw'
+    'gpgsoort_krw': 'areasort_krw'
 }
 
 
@@ -40,8 +42,7 @@ FIELDS_MAPPING_AANAFVOERGEBIED = {
     'iws_dtmwijzmeta': 'dt_latestchanged_krw',
     'gafoppvl': 'surface',
     'gafsoort': 'areasort',
-    'gafsoort_krw': 'areasort_krw',
-    'krwwatertype': 'watertype_krw'
+    'gafsoort_krw': 'areasort_krw'
 }
 
 
@@ -197,8 +198,31 @@ def get_parent_area(properties):
         return None
 
 
+def get_krw_watertype(krwwatertype, sync_hist):
+    """ Return KRWWatertype object."""
+    try:
+        watertype = KRWWatertype.objects.get(code=krwwatertype)
+        return watertype
+    except:
+        message = "KrwWaterType '%s' is is not in Aqua Domain table." % (
+            krwwatertype)
+        log_synchistory(sync_hist, **{'message': message})
+        return None
+
+
+def update_or_create_waterbody(area, krwwatertype, sync_hist):
+    """Update or create Waterbody object"""
+    waterbody, created = WaterBody.objects.get_or_create(area=area)
+    krw_watertype = get_krw_watertype(krwwatertype, sync_hist)
+    if krw_watertype != waterbody.krw_watertype:
+        waterbody.krw_watertype = krw_watertype
+        waterbody.save()
+        return True
+    return False
+
+
 def update_area(area_object, properties, geometry,
-                area_type, username, data_set):
+                area_type, username, data_set, sync_hist):
     """Updates a passed area object. Returns
     amount of activated and updated objects.
 
@@ -253,11 +277,6 @@ def update_area(area_object, properties, geometry,
         setattr(area_object, 'area_type', area_type)
         updated = True
 
-    # parent_area = get_parent_area(properties)
-    # if getattr(area_object, 'parent') != parent_area:
-    #     setattr(area_object, 'parent', parent_area)
-    #     updated = True
-
     area_class = Area.AREA_CLASS_AAN_AFVOERGEBIED
     if getattr(area_object, 'area_class') != area_class:
         setattr(area_object, 'area_class', area_class)
@@ -265,6 +284,10 @@ def update_area(area_object, properties, geometry,
 
     if getattr(area_object, 'data_set') != data_set:
         setattr(area_object, 'data_set', data_set)
+        updated = True
+
+    krwwatertype = properties.get('krwwatertype', None)
+    if update_or_create_waterbody(area_object, krwwatertype, sync_hist):
         updated = True
 
     return updated, activated
@@ -414,8 +437,9 @@ def create_update_areas(content, username, area_type, data_set, sync_hist):
             continue
         updated, activated = update_area(area_object, properties,
                                          geometry, area_type,
-                                         username, data_set)
+                                         username, data_set, sync_hist)
         set_extra_values(area_object, created, updated)
+
         if created:
             amount_created = amount_created + 1
         elif updated:

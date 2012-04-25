@@ -126,7 +126,6 @@ class Communique(GeoObject):
     description = models.TextField(default="")
     edited_by = models.TextField(max_length=150, null=True, blank=True)
     edited_at = models.DateField(null=True, blank=True)
-    watertype_krw = models.CharField(max_length=200, null=True, blank=True)
     dt_latestchanged_krw = models.DateField(help_text='Time changed by GV',
                                             null=True, blank=True)
     surface = models.DecimalField(max_digits=10, decimal_places=1,

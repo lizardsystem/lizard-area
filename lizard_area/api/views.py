@@ -201,31 +201,47 @@ class AreaPropertyView(View):
 
         return data
 
+    def get_first_waterbody(self, area):
+        """Return None or first waterbody objects
+        of passed area."""
+        waterbodies = area.water_bodies.all()
+        if waterbodies.exists():
+           return waterbodies[0]
+        return None
+
     def get_area_data(self, area):
-        """Return area prperties as list of dict."""
-        return [
+        """Return area properties as list of dict."""
+        data = [
             {'name': 'Datum laatste wijziging',
              'value': area.dt_latestchanged_krw},
-            {'name': 'Oppervlakte', 'value': area.surface},
-            {'name': 'Soort gebied', 'value': area.areasort},
-            {'name': 'Soort deelstroomgebied', 'value': area.areasort_krw},
-            {'name': 'Watertype', 'value': area.watertype_krw}]
+            {'name': 'Oppervlakte', 'value': area.surface}]
+        waterbody = self.get_first_waterbody(area)
+        if waterbody is None:
+            return data
+        krw_watertype = ""
+        if waterbody.krw_watertype is not None:
+            krw_watertype = "%s - %s" % (
+                waterbody.krw_watertype.code,
+                waterbody.krw_watertype.description)
+        data.append({'name': 'Watertype', 'value': krw_watertype})
+        return data
 
     def get_waterbody_data(self, area):
         """Return waterbody properties as list of dict."""
         data = []
-        if area.water_bodies.all().exists() == False:
+        waterbody = self.get_first_waterbody(area)
+        if waterbody is None:
             return data
-        waterbody = area.water_bodies.all()[0]
+        status = ""
         if waterbody.krw_status is not None:
             status = "%s - %s" % (
                 waterbody.krw_status.code, waterbody.krw_status.description)
-            data.append({'name': 'Status', 'value': status})
+        data.append({'name': 'Status', 'value': status})
+        krw_watertype = ""
         if waterbody.krw_watertype is not None:
             krw_watertype = "%s - %s" % (
                waterbody.krw_watertype.code, waterbody.krw_watertype.description)
-            data.append({'name': 'Watertype',
-                         'value': krw_watertype})
+        data.append({'name': 'Watertype', 'value': krw_watertype})
         return data
 
 
