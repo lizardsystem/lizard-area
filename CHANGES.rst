@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.3.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add view for bounds of set of areas.
 
 
 0.3.3 (2012-04-25)

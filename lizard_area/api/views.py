@@ -288,3 +288,24 @@ class AreaLinkView(BaseApiView):
             ),
         }
         return output
+
+
+class BoundsView(View):
+    """
+    Get area bounds. Supply idents as comma separated values.
+    """
+    def _union(self, geom1, geom2):
+        """ Return union of geometries """
+        return geom1.union(geom2)
+
+    def get(self, request):
+        """
+        Return bounds as JSON specified in get parameters.
+        """
+        idents = request.GET.get('idents', '').split(',')
+        geoms = Area.objects.filter(
+            ident__in=idents
+        ).values_list('geometry', flat=True)
+        union = reduce(self._union, geoms)
+
+        return union.extent

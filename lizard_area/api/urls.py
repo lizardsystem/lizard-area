@@ -10,13 +10,16 @@ from lizard_area.api.resources import AreaResource
 from lizard_area.api.resources import CategoryResource
 from lizard_area.api.resources import CommuniqueResource
 
-from lizard_area.api.views import RootView
-from lizard_area.api.views import CategoryRootView
-from lizard_area.api.views import AreaSpecial
-from lizard_area.api.views import AreaViewForTree
-from lizard_area.api.views import AreaCommuniqueView
-from lizard_area.api.views import AreaPropertyView
-from lizard_area.api.views import AreaLinkView
+from lizard_area.api.views import (
+    RootView,
+    CategoryRootView,
+    AreaSpecial,
+    AreaViewForTree,
+    AreaCommuniqueView,
+    AreaPropertyView,
+    AreaLinkView,
+    BoundsView,
+)
 
 from lizard_area.models import Area
 
@@ -62,4 +65,7 @@ urlpatterns = patterns(
     url(r'^area_link/$',
         AreaLinkView.as_view(),
         name=NAME_PREFIX + 'area_link'),
-    )
+    url(r'^bounds/$',
+        BoundsView.as_view(),
+        name=NAME_PREFIX + 'bounds'),
+)
