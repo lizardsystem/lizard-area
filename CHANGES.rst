@@ -2,10 +2,12 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.3.4 (unreleased)
-------------------
+0.4 (2012-05-09)
+----------------
 
 - Add view for bounds of set of areas.
+
+- Updated task synchronize_geoobjects to match lizard-task 0.5.
 
 
 0.3.3 (2012-04-25)
@@ -15,7 +17,7 @@ bin/buildoutChangelog of lizard-area
 
 - Removed 'watertype_krw' field from 'Communique' model.
 
-- Added functionality to create/update waterbodies for 'aanafvoergebieden' 
+- Added functionality to create/update waterbodies for 'aanafvoergebieden'
   during the synchronisation proces with 'geovoorziening'.
 
 
