@@ -49,6 +49,7 @@ DATABASES = {
 SITE_ID = 1
 INSTALLED_APPS = [
     'lizard_security',
+    'lizard_fewsnorm',
     'lizard_area',
     'lizard_geo',
     'lizard_ui',

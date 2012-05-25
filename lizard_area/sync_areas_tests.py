@@ -1,10 +1,12 @@
-from lizard_area.sync_areas import properties_keys_to_lower
+from lizard_area.sync_areas import Synchronizer
 
 def test_a():
-    assert len(properties_keys_to_lower({})) == 0
+    synchronizer = Synchronizer()
+    assert len(synchronizer.properties_keys_to_lower({})) == 0
 
 def test_b():
+    synchronizer = Synchronizer()
     orig_dict = {'gafsoort_krw': 'dont care'}
-    assert orig_dict == properties_keys_to_lower(orig_dict)
+    assert orig_dict == synchronizer.properties_keys_to_lower(orig_dict)
     orig_dict = {'fsoort_krw': 'dont care'}
-    assert {'gafsoort_krw': 'dont care'} == properties_keys_to_lower(orig_dict)
+    assert {'gafsoort_krw': 'dont care'} == synchronizer.properties_keys_to_lower(orig_dict)

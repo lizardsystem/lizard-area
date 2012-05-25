@@ -7,6 +7,8 @@ bin/buildoutChangelog of lizard-area
 
 - Set logging for synchronization of 'aanafvoergebieden'.
 
+- Fixed tests.
+
 
 0.4 (2012-05-09)
 ----------------
