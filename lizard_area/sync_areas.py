@@ -91,7 +91,7 @@ class Synchronizer(object):
         group_name = 'LAYERS'
         group_slug = slugify(group_name)
         geo_object_group, created = GeoObjectGroup.objects.get_or_create(
-            name=group_name, slug=group_slug, created_by=user_obj)
+            name=group_name, slug=group_slug)
         if created:
             geo_object_group.source_log = 'LAYERS'
             geo_object_group.save()

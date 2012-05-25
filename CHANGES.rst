@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.6 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fixed  'IntegrityError' on running 'synchronize_geoobjects_...' tasks
 
 
 0.5 (2012-05-25)
