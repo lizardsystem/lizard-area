@@ -1,25 +1,22 @@
-from celery.task import task
-from django.core import management
-from lizard_task.handler import get_handler
 import logging
+from celery.task import task
+from lizard_task.task import task_logging
+from lizard_area.runner import run_sync_area
 
 
 @task()
+@task_logging
 def synchronize_geoobjects(username=None,
                            dataset=None,
                            areatype=None,
-                           taskname=None):
+                           taskname=None,
+                           loglevel=20):
     """
     Import aanafvoergebieden.
     """
-    handler = get_handler(username=username, taskname=taskname)
-    logger = logging.getLogger(__name__)
-    logger.addHandler(handler)
-    logger.setLevel(20)
+    logger = logging.getLogger(taskname)
 
     options = {'username': username,
                'dataset': dataset,
                'areatype': areatype}
-    management.call_command('sync_areas_wfs', **options)
-
-    logger.removeHandler(handler)
+    run_sync_area(options, logger=logger)
