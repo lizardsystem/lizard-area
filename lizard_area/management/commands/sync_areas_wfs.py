@@ -7,6 +7,9 @@ from django.core.management.base import BaseCommand
 from lizard_security.models import DataSet
 from lizard_area.models import AREA_TYPES
 from lizard_area.sync_areas import run_sync
+from lizard_area.models import Area
+from lizard_area.models import AreaLink
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -65,3 +68,13 @@ class Command(BaseCommand):
                  options['areatype'],
                  datasets[0])
         logger.info('Synchronization is finished.')
+        logger.info('Start creating empty area links for KRW areas.')
+
+        counter = 0
+
+        for area in Area.objects.filter(area_class = Area.AREA_CLASS_KRW_WATERLICHAAM, arealink_a__isnull=True):
+            area_link = AreaLink(area_a=area)
+            area_link.save()
+            counter += 1
+
+        logger.info('Finished creating empty area links for KRW areas (%i links created).'%counter)

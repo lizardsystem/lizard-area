@@ -145,9 +145,18 @@ class AreaLink(models.Model):
     Link between areas of different type
     """
     area_a = models.ForeignKey('Area', related_name='arealink_a')
-    area_b = models.ForeignKey('Area', related_name='arealink_b')
+    area_b = models.ForeignKey('Area',
+                               related_name='arealink_b',
+                               null=True,
+                               blank=True)
     link_type = models.CharField(max_length=24, default='',
                                  null=True, blank=True)
+
+    def create_empty_arealinks(self):
+        for area in Area.object.filter(area_class = Area.AREA_CLASS_KRW_WATERLICHAAM, arealink_a__isnull=False):
+            arealink = AreaLink(area_a=area)
+            arealink.save()
+
 
 
 class AreaManager(FilteredGeoManager):
