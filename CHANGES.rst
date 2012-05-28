@@ -2,10 +2,24 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.5 (unreleased)
+0.7 (unreleased)
 ----------------
 
 - add function part to wfs area synchronisation which adds empty arealinks for all KRW areas (pp 219)
+
+
+0.6 (2012-05-25)
+----------------
+
+- Fixed  'IntegrityError' on running 'synchronize_geoobjects_...' tasks
+
+
+0.5 (2012-05-25)
+----------------
+
+- Set logging for synchronization of 'aanafvoergebieden'.
+
+- Fixed tests.
 
 
 0.4 (2012-05-09)

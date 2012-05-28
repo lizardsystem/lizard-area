@@ -15,7 +15,7 @@ from lizard_area.api.resources import CommuniqueResource
 from lizard_area.api.resources import AreaResource
 from lizard_area.api.resources import CategoryResource
 
-from lizard_area import sync_areas
+from lizard_area.sync_areas import Synchronizer
 
 
 class ViewsTest(TestCase):
@@ -47,5 +47,5 @@ class AreaSynchronizationTest(TestCase):
             'lizard_area/testsources/peilgebieden_from_wfs.json')
         content = json.loads(geojson_file.read())
         geojson_file.close()
-
-        self.assertTrue(sync_areas.check_content(content))
+        synchronizer = Synchronizer()
+        self.assertTrue(synchronizer.check_content(content))
