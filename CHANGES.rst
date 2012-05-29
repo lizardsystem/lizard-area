@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.7 (unreleased)
+0.7 (2012-05-29)
 ----------------
 
 - add function part to wfs area synchronisation which adds empty arealinks for all KRW areas (pp 219)
