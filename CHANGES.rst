@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fixed bug in sync_area by runnig the task with 'auto' user.
 
 
 0.7 (2012-05-29)

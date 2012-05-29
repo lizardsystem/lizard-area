@@ -13,7 +13,6 @@ from datetime import date
 
 from django.contrib.gis.geos import MultiPolygon
 from django.contrib.gis.geos import Polygon
-from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 
 from lizard_area.models import Area
@@ -81,13 +80,8 @@ class Synchronizer(object):
             ' | '.join(["%s=%s" % (k, v) for k, v  in kwargs.items()]))
         sync_hist.save()
 
-    def geo_object_group(self, username):
-        """Return an instance of GeoObjectGroup.
-
-        Argument:
-
-        username -- user logging name as string"""
-        user_obj = User.objects.get(username=username)
+    def geo_object_group(self):
+        """Return an instance of GeoObjectGroup."""
         group_name = 'LAYERS'
         group_slug = slugify(group_name)
         geo_object_group, created = GeoObjectGroup.objects.get_or_create(
@@ -266,7 +260,7 @@ class Synchronizer(object):
             setattr(area_object, 'geometry', mp)
             updated = True
 
-        group = self.geo_object_group(username)
+        group = self.geo_object_group()
         if getattr(area_object, 'geo_object_group') != group:
             setattr(area_object, 'geo_object_group', group)
             updated = True
@@ -433,7 +427,7 @@ class Synchronizer(object):
             ident = self.get_ident(properties, area_type)
             self.logger.debug("Synchronise %s ident=%s." % (area_type, ident))
             area_object, created = self.get_or_create_area(
-                self.geo_object_group(username),
+                self.geo_object_group(),
                 geometry_mp,
                 ident,
                 data_set)
@@ -455,10 +449,6 @@ class Synchronizer(object):
             if created or updated:
                 try:
                     area_object.save()
-                    if created:
-                        kwargs = {'amount_created': amount_created}
-                    elif updated:
-                        kwargs = {'amount_updated': amount_updated}
                 except Exception as ex:
                     self.logger.error(".".join(map(str, ex.args)))
                     self.logger.error('Object ident="%s" is not saved' % ident)
