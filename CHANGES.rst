@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.8 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- bugfix for arealink api used in combination with permissions (pp 328)
 
 
 0.7 (2012-05-29)

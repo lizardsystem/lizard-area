@@ -267,6 +267,18 @@ class AreaLinkView(BaseApiView):
         'area_b': 'area_b__name',
     }
 
+    use_filtered_model = True
+
+    def get_filtered_model(self, request):
+        data_set_ids = getattr(request, 'ALLOWED_DATA_SET_IDS', [None])
+        print data_set_ids
+        if request.user.is_superuser:
+            return self.model_class.objects.all()
+        else:
+            return self.model_class.objects.filter(area_a__in=Area.objects.all(),
+                                    area_b__in=Area.objects.all())
+
+
     def get_object_for_api(self,
                            link,
                            flat=True,
