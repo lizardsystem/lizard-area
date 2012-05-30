@@ -11,6 +11,7 @@ from decimal import Decimal
 from datetime import datetime
 from datetime import date
 
+from django.contrib.auth.models import User
 from django.contrib.gis.geos import MultiPolygon
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
@@ -84,8 +85,12 @@ class Synchronizer(object):
         """Return an instance of GeoObjectGroup."""
         group_name = 'LAYERS'
         group_slug = slugify(group_name)
+        geo_object_group_user = User.objects.filter(is_superuser=True)[0]
         geo_object_group, created = GeoObjectGroup.objects.get_or_create(
-            name=group_name, slug=group_slug)
+            name=group_name,
+            slug=group_slug,
+            created_by=geo_object_group_user,
+        )
         if created:
             geo_object_group.source_log = 'LAYERS'
             geo_object_group.save()
