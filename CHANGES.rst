@@ -6,6 +6,7 @@ bin/buildoutChangelog of lizard-area
 ----------------
 
 - bugfix for arealink api used in combination with permissions (pp 328)
+- missing migration step for empty arealinks
 
 
 0.8 (2012-05-29)
