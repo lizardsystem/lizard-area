@@ -275,8 +275,8 @@ class AreaLinkView(BaseApiView):
         if request.user.is_superuser:
             return self.model_class.objects.all()
         else:
-            return self.model_class.objects.filter(area_a__in=Area.objects.all(),
-                                    area_b__in=Area.objects.all())
+            return self.model_class.objects.filter(area_a__data_set__permission_mappers__user_group__members=request.user,
+                                    area_b__data_set__permission_mappers__user_group__members=request.user)
 
 
     def get_object_for_api(self,
