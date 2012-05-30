@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.9.2 (unreleased)
+0.9.2 (2012-05-30)
 ------------------
 
 - bugfix permissions for linked areas
