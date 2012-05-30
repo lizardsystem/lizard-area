@@ -2,8 +2,8 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.10 (unreleased)
------------------
+0.9.1 (2012-05-30)
+------------------
 
 - Default to first superuser as creator of area geoobject group.
 
