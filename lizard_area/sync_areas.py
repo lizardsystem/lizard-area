@@ -89,7 +89,7 @@ class Synchronizer(object):
         geo_object_group, created = GeoObjectGroup.objects.get_or_create(
             name=group_name,
             slug=group_slug,
-            created_by=geo_object_group_user,
+            defaults={'created_by': geo_object_group_user},
         )
         if created:
             geo_object_group.source_log = 'LAYERS'

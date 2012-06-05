@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.9.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix sync not working because it tried to create a new geoobjectgroup.
 
 
 0.9.2 (2012-05-30)
