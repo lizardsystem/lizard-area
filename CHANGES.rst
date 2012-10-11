@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.9.4 (unreleased)
+0.9.4 (2012-10-11)
 ------------------
 
 - Added new view class to check if an area exists, pp391.
