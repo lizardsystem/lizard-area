@@ -321,3 +321,13 @@ class BoundsView(View):
         union = reduce(self._union, geoms)
 
         return union.extent
+
+
+class AreaExistsView(View):
+    """
+    Check if the requested area exists
+    """
+    def get(self, request):
+        object_id = request.GET.get('object_id')
+        area = Area.objects.get(ident=object_id)
+        return {'name': area.name}

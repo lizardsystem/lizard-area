@@ -19,6 +19,7 @@ from lizard_area.api.views import (
     AreaPropertyView,
     AreaLinkView,
     BoundsView,
+    AreaExistsView,
 )
 
 from lizard_area.models import Area
@@ -68,4 +69,7 @@ urlpatterns = patterns(
     url(r'^bounds/$',
         BoundsView.as_view(),
         name=NAME_PREFIX + 'bounds'),
+    url(r'^area_exists/$',
+        AreaExistsView.as_view(),
+        name=NAME_PREFIX + 'area_exists'),
 )
