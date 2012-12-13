@@ -78,7 +78,7 @@ class Synchronizer(object):
         for k, v in kwargs.items():
             setattr(sync_hist, k, v)
         self.logger.info(
-            ' | '.join(["%s=%s" % (k, v) for k, v  in kwargs.items()]))
+            ' | '.join(["%s=%s" % (k, v) for k, v in kwargs.items()]))
         sync_hist.save()
 
     def geo_object_group(self):
@@ -120,15 +120,15 @@ class Synchronizer(object):
         coord = geo_dict.get('coordinates', None)
         geo_type = geo_dict.get('type', None)
         if coord is None or geo_type is None:
-            self.logger.error("Expected 'type' and 'coordinates' "\
-                             "keys to convert dict to MultiPolygon "\
-                             "object, given %s" % geo_dict.keys())
+            self.logger.error("Expected 'type' and 'coordinates' "
+                              "keys to convert dict to MultiPolygon "
+                              "object, given %s" % geo_dict.keys())
             return None
 
         if geo_type.lower() == 'multipolygon':
             polygons = []
-            for item in coord[0]:
-                polygons.append(Polygon(item))
+            for c in coord:
+                [polygons.append(Polygon(item)) for item in c]
 
             if len(polygons) > 0:
                 return MultiPolygon(polygons)
@@ -147,7 +147,7 @@ class Synchronizer(object):
 
         expected_keys = [u'crs', u'type', u'features', u'bbox']
         features_key = u'features'
-        if isinstance(content, dict) == False:
+        if isinstance(content, dict) is False:
             return False
 
         for key in expected_keys:
@@ -164,12 +164,12 @@ class Synchronizer(object):
                                    u'id',
                                    u'geometry_name']
         for feature in features:
-            if isinstance(feature, dict) == False:
+            if isinstance(feature, dict) is False:
                 return False
             for key in expected_propertie_keys:
                 if key not in feature.keys():
                     return False
-            if isinstance(feature['geometry'], dict) == False:
+            if isinstance(feature['geometry'], dict) is False:
                 return False
         return True
 
@@ -249,8 +249,7 @@ class Synchronizer(object):
             value_vss = getattr(area_object, v)
             if isinstance(value_vss, unicode) and isinstance(value_krw, int):
                 value_krw = unicode(value_krw)
-            if isinstance(value_vss, unicode) and isinstance(
-                value_krw, Decimal):
+            if isinstance(value_vss, unicode) and isinstance(value_krw, Decimal):
                 value_krw = unicode(value_krw)
             if isinstance(value_vss, date) and isinstance(value_krw, unicode):
                 value_vss = unicode(value_vss)
@@ -261,6 +260,7 @@ class Synchronizer(object):
                 updated = True
 
         mp = self.geometry2mp(geometry)
+
         if getattr(area_object, 'geometry') != mp:
             setattr(area_object, 'geometry', mp)
             updated = True
@@ -272,7 +272,7 @@ class Synchronizer(object):
 
         detailniveau = properties.get('detailniveau', None)
         if detailniveau is not None or detailniveau != '':
-            if getattr(area_object, 'is_active') == False:
+            if getattr(area_object, 'is_active') is False:
                 setattr(area_object, 'is_active', True)
                 updated = True
                 activated = True
@@ -291,8 +291,7 @@ class Synchronizer(object):
             updated = True
 
         krwwatertype = properties.get('krwwatertype', None)
-        if self.update_or_create_waterbody(
-            area_object, krwwatertype, sync_hist):
+        if self.update_or_create_waterbody(area_object, krwwatertype, sync_hist):
             updated = True
 
         return updated, activated
@@ -329,8 +328,8 @@ class Synchronizer(object):
             if areas.exists():
                 area = areas[0]
                 area.parent = self.get_parent_area(properties)
-                self.logger.debug("Set parent='%s' to child='%s'." % (
-                        area.parent, ident))
+                self.logger.debug(
+                    "Set parent='%s' to child='%s'." % (area.parent, ident))
                 area.save()
             else:
                 self.logger.info(
@@ -352,7 +351,7 @@ class Synchronizer(object):
                                         data_set=data_set,
                                         is_active=True)
         amount_deactivated = 0
-        if vss_areas.exists() == False:
+        if vss_areas.exists() is False:
             return amount_deactivated
 
         for area in vss_areas:
@@ -366,7 +365,7 @@ class Synchronizer(object):
                     is_active = True
                     break
 
-            if is_active == False:
+            if is_active is False:
                 area.is_active = is_active
                 area.save()
                 amount_deactivated = amount_deactivated + 1
@@ -577,8 +576,8 @@ class Synchronizer(object):
             return connection_parameters
         if config.username is None:
             return connection_parameters
-        auth = 'Basic ' + str.strip(base64.encodestring(
-                '%s:%s' % (config.username, config.password)))
+        pwd = "{0}:{1}".format(config.username, config.password)
+        auth = 'Basic ' + str.strip(base64.encodestring(pwd))
         connection_parameters['auth'] = auth
         return connection_parameters
 
@@ -626,5 +625,5 @@ class Synchronizer(object):
         else:
             message = "Synchronization is finished with erors: %s" % (
                 sync_hist.message)
-        self.log_synchistory(sync_hist, **{'dt_finish': datetime.today(),
-                                      'message': message})
+        self.log_synchistory(
+            sync_hist, **{'dt_finish': datetime.today(), 'message': message})

@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.9.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix task to synchronize 'aanafvoergebieden' pp396.
 
 
 0.9.4 (2012-10-11)
