@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.9.6 (unreleased)
+0.9.6 (2013-01-10)
 ------------------
 
 - Fix "Server communication failure" on "Bewerk geometry op kaart" in 
