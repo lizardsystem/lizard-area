@@ -11,6 +11,9 @@ from lizard_area.models import Area
 from lizard_area.models import AreaLink
 from lizard_area.models import Category
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class RootView(View):
     """
@@ -119,9 +122,13 @@ class AreaSpecial(View):
     Area information, specially created for dashboards.
     """
     def get(self, request, ident):
-
-        area = Area.objects.get(
-                    ident=ident)
+        try:
+            area = Area.objects.get(
+                ident=ident)
+        except:
+            logger.warning(
+                "Area ident '{0}' NOT exists, used first area.".format(ident))
+            area = Area.objects.all()[0]
 
         output = {
             "area": {
