@@ -123,7 +123,7 @@ class Communique(GeoObject):
     code = models.CharField(max_length=128, null=True, blank=True)
 
     #
-    description = models.TextField(default="")
+    description = models.TextField(default="", blank=True)
     edited_by = models.TextField(max_length=150, null=True, blank=True)
     edited_at = models.DateField(null=True, blank=True)
     dt_latestchanged_krw = models.DateField(help_text='Time changed by GV',

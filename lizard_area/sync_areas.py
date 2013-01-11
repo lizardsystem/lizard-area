@@ -15,6 +15,7 @@ from django.contrib.auth.models import User
 from django.contrib.gis.geos import MultiPolygon
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
+from django.core.exceptions import ValidationError
 
 from lizard_area.models import Area
 from lizard_area.models import AreaWFSConfiguration
@@ -243,7 +244,7 @@ class Synchronizer(object):
         for k, v in mapping.items():
             if k not in properties.keys():
                 self.logger.warning(
-                    "Wrong fields mapping '%s' NOT in response." % k)
+                    "Wrong fields mapping, expected field '%s' NOT in response." % k)
                 continue
             value_krw = properties.get(k)
             value_vss = getattr(area_object, v)
@@ -452,9 +453,14 @@ class Synchronizer(object):
                 amount_activated = amount_activated + 1
             if created or updated:
                 try:
+                    area_object.full_clean()
                     area_object.save()
+                except ValidationError as ex:
+                    msg = ' '.join(
+                        ['Field:' + k + ', message: ' + '. '.join(v) + ' Value:' + area_object.__dict__[k]
+                         for k,v in ex.message_dict.iteritems()])
+                    self.logger.error("Error on area.save() : {0}".format(msg))
                 except Exception as ex:
-                    self.logger.error(".".join(map(str, ex.args)))
                     self.logger.error('Object ident="%s" is not saved' % ident)
 
         amount_deactivated = self.invalidate(
