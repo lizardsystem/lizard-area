@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.9.7 (unreleased)
+0.9.7 (2013-01-11)
 ------------------
 
 - Update logger message, set description field to allow a blank value.
