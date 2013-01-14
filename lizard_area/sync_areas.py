@@ -444,20 +444,20 @@ class Synchronizer(object):
                                                   sync_hist)
             self.set_extra_values(area_object, created, updated)
 
-            if created:
-                amount_created = amount_created + 1
-            elif updated:
-                amount_updated = amount_updated + 1
-
-            if activated:
-                amount_activated = amount_activated + 1
             if created or updated:
                 try:
                     area_object.full_clean()
                     area_object.save()
+                    if created:
+                        amount_created = amount_created + 1
+                    elif updated:
+                        amount_updated = amount_updated + 1
+
+                    if activated:
+                        amount_activated = amount_activated + 1
                 except ValidationError as ex:
                     msg = ' '.join(
-                        ['Field:' + k + ', message: ' + '. '.join(v) + ' Value:' + area_object.__dict__[k]
+                        ['FIELD:' + k + ', VALUE:' + area_object.__dict__[k] + ', MESSAGE: ' + '. '.join(v) 
                          for k,v in ex.message_dict.iteritems()])
                     self.logger.error("Error on area.save() : {0}".format(msg))
                 except Exception as ex:
