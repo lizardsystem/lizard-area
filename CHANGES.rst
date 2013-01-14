@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.9.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Update logging message.
 
 
 0.9.7 (2013-01-11)
