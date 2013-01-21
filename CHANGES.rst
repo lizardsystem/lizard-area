@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.9.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Replace suffix in date field by the synchronizaton of areas pp418.
 
 
 0.9.8 (2013-01-14)

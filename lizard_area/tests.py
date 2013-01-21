@@ -49,3 +49,11 @@ class AreaSynchronizationTest(TestCase):
         geojson_file.close()
         synchronizer = Synchronizer()
         self.assertTrue(synchronizer.check_content(content))
+
+    def test_replace_suffix(self):
+        date_string = "11-11-2012"
+        synchronizer = Synchronizer()
+        self.assertTrue(date_string == synchronizer.replace_suffix(
+                "{0}Z".format(date_string)))
+        self.assertFalse(date_string == synchronizer.replace_suffix(None))
+        self.assertTrue(date_string == synchronizer.replace_suffix(date_string))

@@ -6,6 +6,7 @@ import httplib
 import logging
 import json
 import base64
+import re
 from decimal import Decimal
 
 from datetime import datetime
@@ -81,6 +82,15 @@ class Synchronizer(object):
         self.logger.info(
             ' | '.join(["%s=%s" % (k, v) for k, v in kwargs.items()]))
         sync_hist.save()
+
+    def replace_suffix(self, date_string):
+        """Replace suffix at the end of the string. 
+        This is because the bug in geoserver at date fields.
+
+        example: replace 'Z' from '11-11-2012Z'"""
+        if not isinstance(date_string, (str, unicode)):
+            return date_string
+        return re.split('[a-zA-Z]$', date_string)[0]
 
     def geo_object_group(self):
         """Return an instance of GeoObjectGroup."""
@@ -253,7 +263,7 @@ class Synchronizer(object):
             if isinstance(value_vss, unicode) and isinstance(value_krw, Decimal):
                 value_krw = unicode(value_krw)
             if isinstance(value_vss, date) and isinstance(value_krw, unicode):
-                value_vss = unicode(value_vss)
+                value_vss = replace_suffix(unicode(value_vss))
             if isinstance(value_krw, unicode):
                 value_krw = value_krw.encode('ascii', 'ignore')
             if value_vss != value_krw:

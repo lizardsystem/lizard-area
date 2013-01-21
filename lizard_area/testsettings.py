@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     'djangorestframework',
     'staticfiles',
     'compressor',
-    'south',
+    #'south',
     'django_nose',
     'django_extensions',
     'django.contrib.admin',
