@@ -17,6 +17,7 @@ from django.contrib.gis.geos import MultiPolygon
 from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
 from django.core.exceptions import ValidationError
+from django.db.models.fields import DateField
 
 from lizard_area.models import Area
 from lizard_area.models import AreaWFSConfiguration
@@ -238,6 +239,7 @@ class Synchronizer(object):
                     area_type, username, data_set, sync_hist):
         """Updates a passed area object. Returns
         amount of activated and updated objects.
+        Remove suffix from value of date fields due bug in wfs pp418.
 
         Arguments:
 
@@ -258,12 +260,13 @@ class Synchronizer(object):
                 continue
             value_krw = properties.get(k)
             value_vss = getattr(area_object, v)
+            field_vss = area_object._meta.get_field(v)
             if isinstance(value_vss, unicode) and isinstance(value_krw, int):
                 value_krw = unicode(value_krw)
             if isinstance(value_vss, unicode) and isinstance(value_krw, Decimal):
                 value_krw = unicode(value_krw)
-            if isinstance(value_vss, date) and isinstance(value_krw, unicode):
-                value_vss = replace_suffix(unicode(value_vss))
+            if isinstance(field_vss, DateField) and isinstance(value_krw, unicode):         
+                value_krw = self.replace_suffix(unicode(value_krw))
             if isinstance(value_krw, unicode):
                 value_krw = value_krw.encode('ascii', 'ignore')
             if value_vss != value_krw:
