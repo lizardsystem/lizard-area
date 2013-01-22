@@ -59,8 +59,7 @@ class AreaViewForTree(View):
         flat = request.GET.get('flat', None)
 
         # Enable this when sync functions are ready for it.
-        #areas = Area.objects.filter(is_active=True)
-        areas = Area.objects.all()
+        areas = Area.objects.filter(is_active=True)
 
         if (not node) or flat == 'true':
             pass
@@ -88,7 +87,8 @@ class AreaViewForTree(View):
 
         # To make is_leaf call unnecessary
         area_children = set([
-                area.parent_id for area in Area.objects.filter(parent__in=areas)])
+                area.parent_id for area in Area.objects.filter(parent__in=areas,
+                                                               is_active=True)])
         result = []
 
         if size == 'id_name':
