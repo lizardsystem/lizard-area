@@ -10,7 +10,6 @@ import re
 from decimal import Decimal
 
 from datetime import datetime
-from datetime import date
 
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import MultiPolygon
@@ -85,7 +84,7 @@ class Synchronizer(object):
         sync_hist.save()
 
     def replace_suffix(self, date_string):
-        """Replace suffix at the end of the string. 
+        """Replace suffix at the end of the string.
         This is because the bug in geoserver at date fields.
 
         example: replace 'Z' from '11-11-2012Z'"""
@@ -265,47 +264,57 @@ class Synchronizer(object):
                 value_krw = unicode(value_krw)
             if isinstance(value_vss, unicode) and isinstance(value_krw, Decimal):
                 value_krw = unicode(value_krw)
-            if isinstance(field_vss, DateField) and isinstance(value_krw, unicode):         
+            if isinstance(field_vss, DateField) and isinstance(value_krw, unicode):
                 value_krw = self.replace_suffix(unicode(value_krw))
+                value_vss = unicode(value_vss)
             if isinstance(value_krw, unicode):
                 value_krw = value_krw.encode('ascii', 'ignore')
             if value_vss != value_krw:
                 setattr(area_object, v, value_krw)
+                self.logger.debug("Update {0} with {1} old value {2}".format(
+                        v, value_vss, value_krw))
                 updated = True
 
         mp = self.geometry2mp(geometry)
 
         if getattr(area_object, 'geometry') != mp:
             setattr(area_object, 'geometry', mp)
+            self.logger.debug("Update geometry")
             updated = True
 
         group = self.geo_object_group()
         if getattr(area_object, 'geo_object_group') != group:
             setattr(area_object, 'geo_object_group', group)
+            self.logger.debug("Update geo object group")
             updated = True
 
         detailniveau = properties.get('detailniveau', None)
         if detailniveau is not None or detailniveau != '':
             if getattr(area_object, 'is_active') is False:
                 setattr(area_object, 'is_active', True)
+                self.logger.debug("Update detailniveau")
                 updated = True
                 activated = True
 
         if getattr(area_object, 'area_type') != area_type:
             setattr(area_object, 'area_type', area_type)
+            self.logger.debug("Update area type")
             updated = True
 
         area_class = Area.AREA_CLASS_AAN_AFVOERGEBIED
         if getattr(area_object, 'area_class') != area_class:
             setattr(area_object, 'area_class', area_class)
+            self.logger.debug("Update area class")
             updated = True
 
         if getattr(area_object, 'data_set') != data_set:
             setattr(area_object, 'data_set', data_set)
+            self.logger.debug("Update data set")
             updated = True
 
         krwwatertype = properties.get('krwwatertype', None)
         if self.update_or_create_waterbody(area_object, krwwatertype, sync_hist):
+            self.logger.debug("Update waterbody")
             updated = True
 
         return updated, activated
@@ -470,8 +479,8 @@ class Synchronizer(object):
                         amount_activated = amount_activated + 1
                 except ValidationError as ex:
                     msg = ' '.join(
-                        ['FIELD:' + k + ', VALUE:' + area_object.__dict__[k] + ', MESSAGE: ' + '. '.join(v) 
-                         for k,v in ex.message_dict.iteritems()])
+                        ['FIELD:' + k + ', VALUE:' + area_object.__dict__[k] + ', MESSAGE: ' + '. '.join(v)
+                         for k, v in ex.message_dict.iteritems()])
                     self.logger.error("Error on area.save() : {0}".format(msg))
                 except Exception as ex:
                     self.logger.error('Object ident="%s" is not saved' % ident)
