@@ -2,7 +2,7 @@ bin/buildoutChangelog of lizard-area
 ===================================================
 
 
-0.9.11 (unreleased)
+0.9.11 (2013-01-22)
 -------------------
 
 - Added filter to select only active areas for three.
