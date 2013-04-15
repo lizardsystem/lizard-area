@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.9.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add script to import krw-data for demo.
 
 
 0.9.11 (2013-01-22)
