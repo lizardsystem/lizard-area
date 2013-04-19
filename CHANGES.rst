@@ -5,7 +5,7 @@ bin/buildoutChangelog of lizard-area
 0.9.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add wshollandsedelta to import krw-data.
 
 
 0.9.12 (2013-04-15)

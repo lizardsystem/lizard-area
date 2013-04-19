@@ -34,6 +34,7 @@ WATERBEHEERDER_DATASET = {
     'NL15': 'Delfland',
     'NL02': 'Fryslan',
     'NL04': 'Grootsalland',
+    'NL19': 'wshollandsedelta',
     'NL33': 'Hunzeenaas',
     'NL34': 'Noorderzijlvest',
     'NL57': 'Peelenmaasvallei'
